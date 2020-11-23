@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="216.971" height="216.971" viewBox="0 0 216.971 216.971">
+  <g id="netOff" transform="translate(-79.515 -255.515)">
+    <path id="Trazado_21" data-name="Trazado 21" d="M1.5,1.5l200,200" transform="translate(86.5 262.5)" fill="none" stroke="#8f9eb7" stroke-linecap="round" stroke-linejoin="round" stroke-width="12"/>
+    <path id="Trazado_22" data-name="Trazado 22" d="M25.08,16.59A99.39,99.39,0,0,1,45.793,30.126" transform="translate(204.304 338.869)" fill="none" stroke="#8f9eb7" stroke-linecap="round" stroke-linejoin="round" stroke-width="12"/>
+    <path id="Trazado_23" data-name="Trazado 23" d="M7.5,36.953A99.388,99.388,0,0,1,54.469,15.24" transform="translate(115.335 332.039)" fill="none" stroke="#8f9eb7" stroke-linecap="round" stroke-linejoin="round" stroke-width="12"/>
+    <path id="Trazado_24" data-name="Trazado 24" d="M16.065,7.967A145.358,145.358,0,0,1,123.9,43.853" transform="translate(158.748 292.856)" fill="none" stroke="#8f9eb7" stroke-linecap="round" stroke-linejoin="round" stroke-width="12"/>
+    <path id="Trazado_25" data-name="Trazado 25" d="M2.13,35.344A144.54,144.54,0,0,1,44.829,9.18" transform="translate(88.151 301.37)" fill="none" stroke="#8f9eb7" stroke-linecap="round" stroke-linejoin="round" stroke-width="12"/>
+    <path id="Trazado_26" data-name="Trazado 26" d="M12.8,32.575a54.509,54.509,0,0,1,63.14,0" transform="translate(142.705 368.787)" fill="none" stroke="#8f9eb7" stroke-linecap="round" stroke-linejoin="round" stroke-width="12"/>
+    <g id="Elipse_1" data-name="Elipse 1" transform="translate(177 418)" fill="#8f9eb7" stroke="#8f9eb7" stroke-width="6">
+      <circle cx="10.5" cy="10.5" r="10.5" stroke="none"/>
+      <circle cx="10.5" cy="10.5" r="7.5" fill="none"/>
+    </g>
+  </g>
+</svg>
