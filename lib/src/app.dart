@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fullfuel_app/src/screens/network_error_screen.dart';
+import 'package:fullfuel_app/src/screens/geolist_screen.dart';
 
 class App extends StatelessWidget {
   @override
@@ -7,6 +7,6 @@ class App extends StatelessWidget {
     return MaterialApp(
         title: 'Fullfuel',
         debugShowCheckedModeBanner: false,
-        home: NetworkErrorScreen());
+        home: GeolistScreen());
   }
 }
