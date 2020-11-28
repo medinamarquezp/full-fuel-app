@@ -16,49 +16,43 @@ class _SplashScreenState extends State<SplashScreen> {
     final containerWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       backgroundColor: FullfuelColors.primary,
-      body: Column(
-        children: [
-          _brandBGTop(containerWidth),
-          _brandLogoCenterWhite(containerHeigth, containerWidth),
-          _loadingBottom()
-        ],
+      body: Container(
+        width: containerWidth,
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            _brandBGTop(containerWidth, containerHeigth),
+            _brandLogoCenterWhite(),
+            _loadingBottom()
+          ],
+        ),
       ),
     );
   }
 
-  Container _brandBGTop(double containerWidth) {
+  SvgPicture _brandBGTop(double containerWidth, double containerHeight) {
     final brandBGTop = "lib/assets/brandBGTop.svg";
-    return Container(
-      child: SvgPicture.asset(brandBGTop,
-          alignment: Alignment.center, width: containerWidth),
-    );
+    return SvgPicture.asset(brandBGTop,
+        alignment: Alignment.topCenter,
+        width: containerWidth,
+        height: containerHeight);
   }
 
-  Container _brandLogoCenterWhite(
-      double containerHeight, double containerWidth) {
+  Container _brandLogoCenterWhite() {
     final logoWhite = "lib/assets/brandWhite.svg";
     return Container(
-      margin: EdgeInsets.only(top: containerHeight * .15),
-      child: SvgPicture.asset(logoWhite,
-          alignment: Alignment.center, width: containerWidth * .25),
+      child:
+          SvgPicture.asset(logoWhite, alignment: Alignment.center, width: 80),
     );
   }
 
-  Expanded _loadingBottom() {
-    return Expanded(
-        child: Row(
-      crossAxisAlignment: CrossAxisAlignment.end,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Container(
-          margin: EdgeInsets.only(bottom: 80),
-          child: CircularProgressIndicator(
-            backgroundColor: Colors.white,
-            valueColor:
-                new AlwaysStoppedAnimation<Color>(FullfuelColors.primary),
-          ),
-        )
-      ],
-    ));
+  Positioned _loadingBottom() {
+    return Positioned(
+      bottom: 60,
+      child: CircularProgressIndicator(
+        backgroundColor: Colors.white,
+        valueColor: new AlwaysStoppedAnimation<Color>(FullfuelColors.primary),
+      ),
+    );
   }
 }
