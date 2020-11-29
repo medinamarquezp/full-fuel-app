@@ -174,6 +174,7 @@ class FuelstationCardWidget extends StatelessWidget {
 
   FloatingActionButton _cardActionButton() {
     return FloatingActionButton(
+      heroTag: null,
       backgroundColor: Colors.white,
       onPressed: null,
       child: Icon(Icons.favorite, size: 30, color: FullfuelColors.action),
