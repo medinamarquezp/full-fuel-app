@@ -13,7 +13,11 @@ mixin LocationMixin<T extends StatefulWidget> on State<T> {
 
   void getCurrentLocation() async {
     Geolocation currentLocation = await Geolocation.getCurrentLocation();
-    this.latitude = currentLocation.latitude;
-    this.longitude = currentLocation.longitude;
+    if (mounted && latitude == null && longitude == null) {
+      setState(() {
+        latitude = double.parse(currentLocation.latitude.toStringAsFixed(6));
+        longitude = double.parse(currentLocation.longitude.toStringAsFixed(6));
+      });
+    }
   }
 }
