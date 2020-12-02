@@ -8,7 +8,8 @@ class Geolocation {
 
   static Future<Geolocation> getCurrentLocation() async {
     Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
+        desiredAccuracy: LocationAccuracy.best,
+        forceAndroidLocationManager: true);
     return Geolocation(position.latitude, position.longitude);
   }
 }
