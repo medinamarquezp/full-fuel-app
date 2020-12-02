@@ -1,44 +1,38 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'fuelstation_list_entity.dart';
+part of 'fuel_price_entity.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
 
-class FuelstationListEntityAdapter extends TypeAdapter<FuelstationListEntity> {
+class FuelPriceEntityAdapter extends TypeAdapter<FuelPriceEntity> {
   @override
-  final int typeId = 0;
+  final int typeId = 1;
 
   @override
-  FuelstationListEntity read(BinaryReader reader) {
+  FuelPriceEntity read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return FuelstationListEntity(
-      fields[0] as int,
-      fields[1] as String,
-      fields[2] as double,
-      fields[3] as bool,
-      (fields[4] as List)?.cast<FuelPriceEntity>(),
+    return FuelPriceEntity(
+      fields[0] as String,
+      fields[1] as double,
+      fields[2] as String,
     );
   }
 
   @override
-  void write(BinaryWriter writer, FuelstationListEntity obj) {
+  void write(BinaryWriter writer, FuelPriceEntity obj) {
     writer
-      ..writeByte(5)
-      ..writeByte(0)
-      ..write(obj.fuelstationID)
-      ..writeByte(1)
-      ..write(obj.name)
-      ..writeByte(2)
-      ..write(obj.distance)
       ..writeByte(3)
-      ..write(obj.isNowOpen)
-      ..writeByte(4)
-      ..write(obj.fuelPrices);
+      ..writeByte(0)
+      ..write(obj.fuelType)
+      ..writeByte(1)
+      ..write(obj.price)
+      ..writeByte(2)
+      ..write(obj.evolution);
   }
 
   @override
@@ -47,7 +41,7 @@ class FuelstationListEntityAdapter extends TypeAdapter<FuelstationListEntity> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is FuelstationListEntityAdapter &&
+      other is FuelPriceEntityAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }
