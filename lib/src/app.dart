@@ -16,7 +16,7 @@ class _AppState extends State<App> {
     return MaterialApp(
       title: 'Fullfuel',
       debugShowCheckedModeBanner: false,
-      initialRoute: "geolist",
+      initialRoute: "/",
       routes: getAppRoutes(),
       navigatorKey: navigatorKey,
     );
@@ -34,7 +34,7 @@ class _AppState extends State<App> {
     if (!hasConnection) {
       navigatorKey.currentState.pushNamed("networkError");
     } else {
-      navigatorKey.currentState.pushNamed("geolist");
+      navigatorKey.currentState.pushNamed("/");
     }
   }
 }

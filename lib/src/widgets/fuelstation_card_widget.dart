@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fullfuel_app/src/styles/fullfuel_colors.dart';
+import 'package:fullfuel_app/src/entities/fuel_price_entity.dart';
+import 'package:fullfuel_app/src/entities/fuelstation_list_entity.dart';
 
 class FuelstationCardWidget extends StatelessWidget {
-  const FuelstationCardWidget({Key key}) : super(key: key);
+  final FuelstationListEntity fuelstation;
+
+  FuelstationCardWidget(this.fuelstation);
 
   @override
   Card build(BuildContext context) {
@@ -28,13 +32,15 @@ class FuelstationCardWidget extends StatelessWidget {
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              _cardTitle("Estación de servicio Galp"),
+                              _cardTitle(fuelstation.name),
                               Container(
                                 margin: EdgeInsets.only(top: 2),
                                 child: Row(
                                   children: [
-                                    _cardFuelStationDistance("0.9 KM"),
-                                    _cardFuelStationIsOpen(true)
+                                    _cardFuelStationDistance(
+                                        "${fuelstation.distance} KM"),
+                                    _cardFuelStationIsOpen(
+                                        fuelstation.isNowOpen)
                                   ],
                                 ),
                               ),
@@ -52,9 +58,11 @@ class FuelstationCardWidget extends StatelessWidget {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _cardFuelPrices("Gasolina 95", 1.259, "UP"),
-                  _cardFuelPrices("Gasolina 98", 1.259, "DOWN"),
-                  _cardFuelPrices("Gasoil", 1.259, "EQUALS"),
+                  for (final fuelprice in fuelstation.fuelPrices)
+                    _cardFuelPrices(
+                        FuelPriceEntity.getFuelNameFromType(fuelprice.fuelType),
+                        fuelprice.price,
+                        fuelprice.evolution)
                 ],
               ),
             ),
@@ -146,7 +154,7 @@ class FuelstationCardWidget extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(fuelName.toUpperCase(), style: nameTextStyles),
+              Text(fuelName, style: nameTextStyles),
               Row(
                 children: [
                   Text(price.toString(), style: priceTextStyles),

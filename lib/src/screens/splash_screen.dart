@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fullfuel_app/src/styles/fullfuel_colors.dart';
+import 'package:fullfuel_app/src/mixins/location_mixim.dart';
+import 'package:fullfuel_app/src/repositories/db/fuelstations_db_repo.dart';
+import 'package:fullfuel_app/src/repositories/remote/fuelstations_remote_repo.dart';
 
 class SplashScreen extends StatefulWidget {
   SplashScreen({Key key}) : super(key: key);
@@ -9,23 +13,54 @@ class SplashScreen extends StatefulWidget {
   _SplashScreenState createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> {
+class _SplashScreenState extends State<SplashScreen> with LocationMixin {
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  Future<bool> _fetchData() async {
+    final remoteRepo = FuelstationsRemoteRepo(latitude, longitude);
+    final fuelstations = await remoteRepo.fetchFuelstationsListGeo();
+    final box = await Hive.openBox('fuelstations');
+    final dbRepo = FuelstationsDBRepo(box);
+    await dbRepo.saveList(fuelstations);
+    return true;
+  }
+
   @override
   Widget build(BuildContext context) {
-    final containerHeigth = MediaQuery.of(context).size.height;
+    final containerHeight = MediaQuery.of(context).size.height;
     final containerWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       backgroundColor: FullfuelColors.primary,
-      body: Container(
-        width: containerWidth,
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            _brandBGTop(containerWidth, containerHeigth),
-            _brandLogoCenterWhite(),
-            _loadingBottom()
-          ],
-        ),
+      body: FutureBuilder(
+        future: _fetchData(),
+        builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+          if (snapshot.hasData) {
+            Future.delayed(Duration.zero, () {
+              Navigator.of(context).pushReplacementNamed("geolist");
+            });
+          } else if (snapshot.hasError) {
+          } else {
+            return _appContainer(containerWidth, containerHeight);
+          }
+          return _appContainer(containerWidth, containerHeight);
+        },
+      ),
+    );
+  }
+
+  Container _appContainer(double containerWidth, double containerHeight) {
+    return Container(
+      width: containerWidth,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          _brandBGTop(containerWidth, containerHeight),
+          _brandLogoCenterWhite(),
+          _loadingBottom()
+        ],
       ),
     );
   }
