@@ -38,12 +38,15 @@ class _SplashScreenState extends State<SplashScreen> with LocationMixin {
         future: _fetchData(),
         builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
           if (snapshot.hasData) {
-            Future.delayed(Duration.zero, () {
-              Navigator.of(context).pushReplacementNamed("geolist");
-            });
+            Future.delayed(
+              Duration.zero,
+              () {
+                Navigator.of(context).pushReplacementNamed("geolist");
+              },
+            );
           } else if (snapshot.hasError) {
-          } else {
-            return _appContainer(containerWidth, containerHeight);
+            // TODO: Catch error
+            print(snapshot.error);
           }
           return _appContainer(containerWidth, containerHeight);
         },
