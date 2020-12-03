@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fullfuel_app/src/styles/fullfuel_colors.dart';
 import 'package:fullfuel_app/src/entities/fuel_price_entity.dart';
@@ -6,6 +7,7 @@ import 'package:fullfuel_app/src/entities/fuelstation_list_entity.dart';
 
 class FuelstationCardWidget extends StatelessWidget {
   final FuelstationListEntity fuelstation;
+  final _apiURL = DotEnv().env['API_URL'];
 
   FuelstationCardWidget(this.fuelstation);
 
@@ -28,7 +30,7 @@ class FuelstationCardWidget extends StatelessWidget {
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          _cardFuelIconBrand(),
+                          _cardFuelIconBrand(brandLogo: fuelstation.brandImage),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -84,10 +86,10 @@ class FuelstationCardWidget extends StatelessWidget {
       child: SvgPicture.asset(fuelStationIcon,
           alignment: Alignment.center, width: 18),
     );
-    final brandIcon = (brandLogo == null)
+    final brandIcon = (brandLogo == "")
         ? noBrandIcon
         : CircleAvatar(
-            backgroundImage: NetworkImage(brandLogo),
+            backgroundImage: NetworkImage(_apiURL + brandLogo),
             backgroundColor: Colors.transparent);
     return Container(
       margin: EdgeInsets.only(right: 10),

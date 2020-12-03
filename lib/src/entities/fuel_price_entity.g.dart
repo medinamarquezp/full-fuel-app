@@ -17,9 +17,9 @@ class FuelPriceEntityAdapter extends TypeAdapter<FuelPriceEntity> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return FuelPriceEntity(
-      fields[0] as String,
-      fields[1] as double,
-      fields[2] as String,
+      fuelType: fields[0] as String,
+      price: fields[1] as double,
+      evolution: fields[2] as String,
     );
   }
 

@@ -20,15 +20,24 @@ class FuelstationListEntity {
   @HiveField(4)
   List<FuelPriceEntity> fuelPrices;
 
-  FuelstationListEntity(this.fuelstationID, this.name, this.distance,
-      this.isNowOpen, this.fuelPrices);
+  @HiveField(5)
+  String brandImage;
+
+  FuelstationListEntity(
+      {this.fuelstationID,
+      this.name,
+      this.distance,
+      this.isNowOpen,
+      this.fuelPrices,
+      this.brandImage});
 
   factory FuelstationListEntity.fromJson(Map<String, dynamic> json) {
     return FuelstationListEntity(
-        json["fuelstationID"],
-        json["name"],
-        json["distance"],
-        json["isNowOpen"],
-        FuelPriceEntity.fuelPriceListFromMap(json["fuelPrices"]));
+        fuelstationID: json["fuelstationID"],
+        name: json["name"],
+        distance: json["distance"],
+        isNowOpen: json["isNowOpen"],
+        fuelPrices: FuelPriceEntity.fuelPriceListFromMap(json["fuelPrices"]),
+        brandImage: json["brandImage"] != null ? json["brandImage"] : "");
   }
 }

@@ -13,10 +13,13 @@ class FuelPriceEntity {
   @HiveField(2)
   String evolution;
 
-  FuelPriceEntity(this.fuelType, this.price, this.evolution);
+  FuelPriceEntity({this.fuelType, this.price, this.evolution});
 
   factory FuelPriceEntity.fromJson(Map<String, dynamic> json) {
-    return FuelPriceEntity(json["fuelType"], json["price"], json["evolution"]);
+    return FuelPriceEntity(
+        fuelType: json["fuelType"],
+        price: json["price"],
+        evolution: json["evolution"]);
   }
 
   static List<FuelPriceEntity> fuelPriceListFromMap(List<dynamic> fuelPrices) {

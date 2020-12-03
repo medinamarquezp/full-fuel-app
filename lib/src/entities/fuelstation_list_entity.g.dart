@@ -17,18 +17,19 @@ class FuelstationListEntityAdapter extends TypeAdapter<FuelstationListEntity> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return FuelstationListEntity(
-      fields[0] as int,
-      fields[1] as String,
-      fields[2] as double,
-      fields[3] as bool,
-      (fields[4] as List)?.cast<FuelPriceEntity>(),
+      fuelstationID: fields[0] as int,
+      name: fields[1] as String,
+      distance: fields[2] as double,
+      isNowOpen: fields[3] as bool,
+      fuelPrices: (fields[4] as List)?.cast<FuelPriceEntity>(),
+      brandImage: fields[5] as String,
     );
   }
 
   @override
   void write(BinaryWriter writer, FuelstationListEntity obj) {
     writer
-      ..writeByte(5)
+      ..writeByte(6)
       ..writeByte(0)
       ..write(obj.fuelstationID)
       ..writeByte(1)
@@ -38,7 +39,9 @@ class FuelstationListEntityAdapter extends TypeAdapter<FuelstationListEntity> {
       ..writeByte(3)
       ..write(obj.isNowOpen)
       ..writeByte(4)
-      ..write(obj.fuelPrices);
+      ..write(obj.fuelPrices)
+      ..writeByte(5)
+      ..write(obj.brandImage);
   }
 
   @override

@@ -8,7 +8,15 @@ class FuelstationsDBRepo {
 
   Future<void> saveList(List<FuelstationListEntity> list) async {
     list.forEach((fuelstation) async =>
-        await _fuelstationsBox.putAt(fuelstation.fuelstationID, fuelstation));
+        {await upsert(fuelstation.fuelstationID, fuelstation)});
+  }
+
+  Future<void> upsert(int key, FuelstationListEntity fuelstation) async {
+    if (this._fuelstationsBox.containsKey(key)) {
+      await _fuelstationsBox.putAt(key, fuelstation);
+    } else {
+      await _fuelstationsBox.put(key, fuelstation);
+    }
   }
 
   FuelstationListEntity getById(int key) {
