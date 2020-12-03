@@ -60,6 +60,7 @@ class _GeolistScreenState extends State<GeolistScreen> with LocationMixin {
         if (snapshot.hasData) {
           return _fuelstationsList(snapshot.data);
         } else if (snapshot.hasError) {
+          // TODO: Catch error
           print("ERROR: ${snapshot.error}");
         }
         return Scaffold();

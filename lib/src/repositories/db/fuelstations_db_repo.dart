@@ -26,6 +26,7 @@ class FuelstationsDBRepo {
   Iterable<FuelstationListEntity> getList() {
     final keys = _fuelstationsBox.keys.toList();
     final list = keys.map((key) => getById(key)).toList();
+    list.sort((a, b) => a.distance.compareTo(b.distance));
     return list;
   }
 }
