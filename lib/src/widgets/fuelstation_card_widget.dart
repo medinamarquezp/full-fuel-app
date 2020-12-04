@@ -81,7 +81,7 @@ class FuelstationCardWidget extends StatelessWidget {
           bottom: 0,
           right: 20,
           child: FavouriteButtonWidget(
-              id: fuelstation.fuelstationID, name: fuelstation.name),
+              id: fuelstation.fuelstationID, fuelstation: fuelstation),
         )
       ],
     );
