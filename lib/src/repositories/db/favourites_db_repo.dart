@@ -22,4 +22,15 @@ class FavouritesDBRepo {
   bool isFavourite(int key) {
     return this._favouriteBox.containsKey(key);
   }
+
+  FuelstationListEntity getById(int key) {
+    return _favouriteBox.get(key) as FuelstationListEntity;
+  }
+
+  Iterable<FuelstationListEntity> getList() {
+    final keys = _favouriteBox.keys.toList();
+    final list = keys.map((key) => getById(key)).toList();
+    list.sort((a, b) => a.distance.compareTo(b.distance));
+    return list;
+  }
 }

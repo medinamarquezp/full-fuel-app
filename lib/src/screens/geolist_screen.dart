@@ -34,22 +34,21 @@ class _GeolistScreenState extends State<GeolistScreen> with LocationMixin {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        backgroundColor: FullfuelColors.secondary_5,
-        appBar: AppBarWidget(),
-        body: Column(
-          children: [
-            _distance(),
-            Expanded(
-              child: GlowingOverscrollIndicator(
-                axisDirection: AxisDirection.down,
-                color: FullfuelColors.primary,
-                child: _buildList(),
+          backgroundColor: FullfuelColors.secondary_5,
+          appBar: AppBarWidget(),
+          body: Column(
+            children: [
+              _distance(),
+              Expanded(
+                child: GlowingOverscrollIndicator(
+                  axisDirection: AxisDirection.down,
+                  color: FullfuelColors.primary,
+                  child: _buildList(),
+                ),
               ),
-            ),
-          ],
-        ),
-        bottomNavigationBar: AppBottomNavigationBarWidget(),
-      ),
+            ],
+          ),
+          bottomNavigationBar: AppBottomNavigationBarWidget(index: 0)),
     );
   }
 

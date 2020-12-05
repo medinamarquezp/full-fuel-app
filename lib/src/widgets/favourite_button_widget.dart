@@ -29,7 +29,7 @@ class _FavouriteButtonWidget extends State<FavouriteButtonWidget> {
   }
 
   _init() async {
-    final box = await Hive.openBox('favourites');
+    final box = await Hive.openBox<FuelstationListEntity>('favourites');
     favouritesDBRepo = FavouritesDBRepo(box);
     isFavourite = favouritesDBRepo.isFavourite(widget.id);
     setState(() {
