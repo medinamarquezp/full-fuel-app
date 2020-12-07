@@ -10,5 +10,8 @@ class Database {
       ..init(appRootDir.path)
       ..registerAdapter(FuelstationListEntityAdapter())
       ..registerAdapter(FuelPriceEntityAdapter());
+    await Hive.openBox<FuelstationListEntity>('fuelstations');
+    await Hive.openBox<FuelstationListEntity>('favourites');
+    await Hive.openBox('config');
   }
 }
