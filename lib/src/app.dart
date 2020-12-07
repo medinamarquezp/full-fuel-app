@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fullfuel_app/src/routes/app_routes.dart';
 import 'package:fullfuel_app/src/services/connection_status.dart';
 
@@ -13,6 +14,10 @@ class _AppState extends State<App> {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
     return MaterialApp(
       title: 'Fullfuel',
       debugShowCheckedModeBanner: false,
