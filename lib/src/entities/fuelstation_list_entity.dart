@@ -15,27 +15,38 @@ class FuelstationListEntity {
   double distance;
 
   @HiveField(3)
-  bool isNowOpen;
+  double latitude;
 
   @HiveField(4)
-  List<FuelPriceEntity> fuelPrices;
+  double longitude;
 
   @HiveField(5)
+  bool isNowOpen;
+
+  @HiveField(6)
+  List<FuelPriceEntity> fuelPrices;
+
+  @HiveField(7)
   String brandImage;
 
   FuelstationListEntity(
       {this.fuelstationID,
       this.name,
       this.distance,
+      this.latitude,
+      this.longitude,
       this.isNowOpen,
       this.fuelPrices,
       this.brandImage});
 
   factory FuelstationListEntity.fromJson(Map<String, dynamic> json) {
+    final coordinates = json["coordinates"];
     return FuelstationListEntity(
         fuelstationID: json["fuelstationID"],
         name: json["name"],
         distance: json["distance"],
+        latitude: coordinates["latitude"],
+        longitude: coordinates["longitude"],
         isNowOpen: json["isNowOpen"],
         fuelPrices: FuelPriceEntity.fuelPriceListFromMap(json["fuelPrices"]),
         brandImage: json["brandImage"] != null ? json["brandImage"] : "");
