@@ -3,14 +3,17 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fullfuel_app/src/styles/fullfuel_colors.dart';
 import 'package:fullfuel_app/src/widgets/favourite_button_widget.dart';
+import 'package:fullfuel_app/src/services/geolocation.dart';
 import 'package:fullfuel_app/src/entities/fuel_price_entity.dart';
 import 'package:fullfuel_app/src/entities/fuelstation_list_entity.dart';
 
 class FuelstationCardWidget extends StatelessWidget {
   final FuelstationListEntity fuelstation;
+  final double appLatitude;
+  final double appLongitude;
   final _apiURL = DotEnv().env['API_URL'];
 
-  FuelstationCardWidget(this.fuelstation);
+  FuelstationCardWidget(this.fuelstation, this.appLatitude, this.appLongitude);
 
   @override
   Stack build(BuildContext context) {
@@ -44,7 +47,12 @@ class FuelstationCardWidget extends StatelessWidget {
                                     child: Row(
                                       children: [
                                         _cardFuelStationDistance(
-                                            "${fuelstation.distance} KM"),
+                                            Geolocation.getDistance(
+                                          appLatitude,
+                                          appLongitude,
+                                          fuelstation.latitude,
+                                          fuelstation.longitude,
+                                        )),
                                         _cardFuelStationIsOpen(
                                             fuelstation.isNowOpen)
                                       ],

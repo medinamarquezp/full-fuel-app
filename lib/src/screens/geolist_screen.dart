@@ -4,7 +4,6 @@ import 'package:fullfuel_app/src/styles/fullfuel_colors.dart';
 import 'package:fullfuel_app/src/widgets/app_bar_widget.dart';
 import 'package:fullfuel_app/src/widgets/fuelstation_card_widget.dart';
 import 'package:fullfuel_app/src/widgets/app_bottom_navigation_bar_widget.dart';
-import 'package:fullfuel_app/src/mixins/location_mixim.dart';
 import 'package:fullfuel_app/src/entities/fuelstation_list_entity.dart';
 import 'package:fullfuel_app/src/repositories/db/fuelstations_db_repo.dart';
 
@@ -15,21 +14,7 @@ class GeolistScreen extends StatefulWidget {
   _GeolistScreenState createState() => _GeolistScreenState();
 }
 
-class _GeolistScreenState extends State<GeolistScreen> with LocationMixin {
-  FuelstationsDBRepo dbRepo;
-  List<FuelstationListEntity> fuelstationsList;
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  Future<List<FuelstationListEntity>> _getFuelstations() async {
-    final box = await Hive.openBox('fuelstations');
-    final dbRepo = FuelstationsDBRepo(box);
-    return dbRepo.getList();
-  }
-
+class _GeolistScreenState extends State<GeolistScreen> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -43,7 +28,7 @@ class _GeolistScreenState extends State<GeolistScreen> with LocationMixin {
                 child: GlowingOverscrollIndicator(
                   axisDirection: AxisDirection.down,
                   color: FullfuelColors.primary,
-                  child: _buildList(),
+                  child: _fuelstationsList(),
                 ),
               ),
             ],
@@ -52,26 +37,18 @@ class _GeolistScreenState extends State<GeolistScreen> with LocationMixin {
     );
   }
 
-  Widget _buildList() {
-    return FutureBuilder(
-      future: _getFuelstations(),
-      builder: (context, AsyncSnapshot<List<FuelstationListEntity>> snapshot) {
-        if (snapshot.hasData) {
-          return _fuelstationsList(snapshot.data);
-        } else if (snapshot.hasError) {
-          // TODO: Catch error
-          print("ERROR: ${snapshot.error}");
-        }
-        return Scaffold();
-      },
-    );
-  }
-
-  ListView _fuelstationsList(List<FuelstationListEntity> list) {
+  ListView _fuelstationsList() {
+    final configBox = Hive.box('config');
+    final latitude = configBox.get('latitude');
+    final longitude = configBox.get('longitude');
+    final fuelstationsBox = Hive.box<FuelstationListEntity>('fuelstations');
+    final dbRepo = FuelstationsDBRepo(fuelstationsBox);
+    final fuelstationsList = dbRepo.getList().toList();
     return ListView.builder(
-      itemCount: list.length,
+      itemCount: fuelstationsList.length,
       itemBuilder: (BuildContext context, int index) {
-        return FuelstationCardWidget(list[index]);
+        return FuelstationCardWidget(
+            fuelstationsList[index], latitude, longitude);
       },
     );
   }
@@ -91,11 +68,5 @@ class _GeolistScreenState extends State<GeolistScreen> with LocationMixin {
         ),
       ],
     );
-  }
-
-  @override
-  void dispose() {
-    Hive.close();
-    super.dispose();
   }
 }

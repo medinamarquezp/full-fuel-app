@@ -6,8 +6,8 @@ import 'package:fullfuel_app/src/styles/fullfuel_colors.dart';
 import 'package:fullfuel_app/src/widgets/app_bar_widget.dart';
 import 'package:fullfuel_app/src/widgets/fuelstation_card_widget.dart';
 import 'package:fullfuel_app/src/widgets/app_bottom_navigation_bar_widget.dart';
-import 'package:fullfuel_app/src/mixins/location_mixim.dart';
 import 'package:fullfuel_app/src/entities/fuelstation_list_entity.dart';
+import 'package:fullfuel_app/src/repositories/db/favourites_db_repo.dart';
 
 class FavouritesScreen extends StatefulWidget {
   FavouritesScreen({Key key}) : super(key: key);
@@ -16,7 +16,9 @@ class FavouritesScreen extends StatefulWidget {
   _FavouritesScreen createState() => _FavouritesScreen();
 }
 
-class _FavouritesScreen extends State<FavouritesScreen> with LocationMixin {
+class _FavouritesScreen extends State<FavouritesScreen> {
+  final configBox = Hive.box('config');
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -40,27 +42,26 @@ class _FavouritesScreen extends State<FavouritesScreen> with LocationMixin {
     );
   }
 
-  FutureBuilder _buildList() {
-    return FutureBuilder(
-      future: Hive.openBox<FuelstationListEntity>('favourites'),
-      builder: (context, snapshot) {
-        return ValueListenableBuilder(
-          valueListenable:
-              Hive.box<FuelstationListEntity>('favourites').listenable(),
-          builder: (context, Box<FuelstationListEntity> box, _) {
-            if (box.values.isEmpty) {
-              return _noFavourites();
-            } else {
-              return ListView.builder(
-                itemCount: box.values.length,
-                itemBuilder: (context, index) {
-                  var fuelstation = box.getAt(index);
-                  return FuelstationCardWidget(fuelstation);
-                },
-              );
-            }
-          },
-        );
+  ValueListenableBuilder _buildList() {
+    final latitude = configBox.get('latitude');
+    final longitude = configBox.get('longitude');
+    return ValueListenableBuilder(
+      valueListenable:
+          Hive.box<FuelstationListEntity>('favourites').listenable(),
+      builder: (context, box, _) {
+        if (box.values.isEmpty) {
+          return _noFavourites();
+        } else {
+          return ListView.builder(
+            itemCount: box.values.length,
+            itemBuilder: (context, index) {
+              FavouritesDBRepo favouritesRepo = FavouritesDBRepo(box);
+              final orderedList = favouritesRepo.getList().toList();
+              final fuelstation = orderedList[index];
+              return FuelstationCardWidget(fuelstation, latitude, longitude);
+            },
+          );
+        }
       },
     );
   }
@@ -99,11 +100,5 @@ class _FavouritesScreen extends State<FavouritesScreen> with LocationMixin {
     return Container(
       child: Text(content, style: styles, textAlign: TextAlign.center),
     );
-  }
-
-  @override
-  void dispose() {
-    Hive.close();
-    super.dispose();
   }
 }

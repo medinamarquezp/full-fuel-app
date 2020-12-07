@@ -16,30 +16,18 @@ class FavouriteButtonWidget extends StatefulWidget {
 class _FavouriteButtonWidget extends State<FavouriteButtonWidget> {
   final Color action = FullfuelColors.action;
   final Color white = Colors.white;
+  final favouritesBox = Hive.box<FuelstationListEntity>('favourites');
   FavouritesDBRepo favouritesDBRepo;
   Color buttonBackgroundColor;
   Color iconColor;
   bool isFavourite;
 
   @override
-  void initState() {
-    super.initState();
-    buttonBackgroundColor = white;
-    _init();
-  }
-
-  _init() async {
-    final box = await Hive.openBox<FuelstationListEntity>('favourites');
-    favouritesDBRepo = FavouritesDBRepo(box);
-    isFavourite = favouritesDBRepo.isFavourite(widget.id);
-    setState(() {
-      buttonBackgroundColor = (isFavourite) ? action : white;
-      iconColor = (isFavourite) ? white : action;
-    });
-  }
-
-  @override
   FloatingActionButton build(BuildContext context) {
+    favouritesDBRepo = FavouritesDBRepo(favouritesBox);
+    isFavourite = favouritesDBRepo.isFavourite(widget.id);
+    buttonBackgroundColor = (isFavourite) ? action : white;
+    iconColor = (isFavourite) ? white : action;
     return FloatingActionButton(
       heroTag: null,
       backgroundColor: buttonBackgroundColor,
