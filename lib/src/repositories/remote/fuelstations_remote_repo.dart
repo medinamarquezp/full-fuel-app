@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:fullfuel_app/src/entities/fuelstation_list_entity.dart';
+import 'package:fullfuel_app/src/entities/fuelstation_detail_entity.dart';
 
 class FuelstationsRemoteRepo {
   final _apiURL = DotEnv().env['API_URL'];
@@ -36,6 +37,20 @@ class FuelstationsRemoteRepo {
       return _mapFuelStationList(responseList);
     } else {
       throw Exception('Failed to load fuelstations list from IDs');
+    }
+  }
+
+  Future<FuelstationDetailEntity> fetchFuelstationDetail(
+      {int fuelstationID}) async {
+    final url =
+        "$_apiURL/api/fuelstations/detail/$latitude/$longitude/$fuelstationID";
+    final rs = await http.get(url, headers: _headers());
+    if (rs.statusCode == 200) {
+      final rsDecoded = jsonDecode(rs.body);
+      final response = rsDecoded["response"] as FuelstationDetailEntity;
+      return response;
+    } else {
+      throw Exception('Failed to fetch fuelstation detail');
     }
   }
 
