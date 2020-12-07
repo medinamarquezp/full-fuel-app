@@ -20,7 +20,7 @@ class _AppBottomNavigationBarWidgetState
     extends State<AppBottomNavigationBarWidget> {
   void _onItemTapped(BuildContext context, int index) {
     final route = getNavigationRouteName(index);
-    Navigator.pushNamed(context, route);
+    Navigator.of(context).pushNamedAndRemoveUntil(route, (route) => false);
   }
 
   @override

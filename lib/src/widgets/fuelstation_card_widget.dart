@@ -19,69 +19,75 @@ class FuelstationCardWidget extends StatelessWidget {
   Stack build(BuildContext context) {
     return Stack(
       children: [
-        Card(
-          elevation: 30,
-          shadowColor: FullfuelColors.secondary_5,
-          margin: EdgeInsets.only(top: 20, bottom: 10, left: 10, right: 10),
-          child: Container(
-            padding: EdgeInsets.all(15),
-            child: Column(
-              children: [
-                Container(
-                  child: Row(
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              _cardFuelIconBrand(
-                                  brandLogo: fuelstation.brandImage),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  _cardTitle(fuelstation.name),
-                                  Container(
-                                    margin: EdgeInsets.only(top: 2),
-                                    child: Row(
-                                      children: [
-                                        _cardFuelStationDistance(
-                                            Geolocation.getDistance(
-                                          appLatitude,
-                                          appLongitude,
-                                          fuelstation.latitude,
-                                          fuelstation.longitude,
-                                        )),
-                                        _cardFuelStationIsOpen(
-                                            fuelstation.isNowOpen)
-                                      ],
+        GestureDetector(
+          onTap: () => {
+            Navigator.pushNamed(context, 'detail',
+                arguments: {'fuelstationID': fuelstation.fuelstationID})
+          },
+          child: Card(
+            elevation: 30,
+            shadowColor: FullfuelColors.secondary_5,
+            margin: EdgeInsets.only(top: 20, bottom: 10, left: 10, right: 10),
+            child: Container(
+              padding: EdgeInsets.all(15),
+              child: Column(
+                children: [
+                  Container(
+                    child: Row(
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                _cardFuelIconBrand(
+                                    brandLogo: fuelstation.brandImage),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    _cardTitle(fuelstation.name),
+                                    Container(
+                                      margin: EdgeInsets.only(top: 2),
+                                      child: Row(
+                                        children: [
+                                          _cardFuelStationDistance(
+                                              Geolocation.getDistance(
+                                            appLatitude,
+                                            appLongitude,
+                                            fuelstation.latitude,
+                                            fuelstation.longitude,
+                                          )),
+                                          _cardFuelStationIsOpen(
+                                              fuelstation.isNowOpen)
+                                        ],
+                                      ),
                                     ),
-                                  ),
-                                ],
-                              )
-                            ],
-                          ),
-                        ],
-                      ),
-                    ],
+                                  ],
+                                )
+                              ],
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                Container(
-                  margin: EdgeInsets.only(top: 10),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      for (final fuelprice in fuelstation.fuelPrices)
-                        _cardFuelPrices(
-                            FuelPriceEntity.getFuelNameFromType(
-                                fuelprice.fuelType),
-                            fuelprice.price,
-                            fuelprice.evolution)
-                    ],
+                  Container(
+                    margin: EdgeInsets.only(top: 10),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        for (final fuelprice in fuelstation.fuelPrices)
+                          _cardFuelPrices(
+                              FuelPriceEntity.getFuelNameFromType(
+                                  fuelprice.fuelType),
+                              fuelprice.price,
+                              fuelprice.evolution)
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

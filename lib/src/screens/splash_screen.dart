@@ -83,7 +83,8 @@ class _SplashScreenState extends State<SplashScreen> {
             Future.delayed(
               Duration.zero,
               () {
-                Navigator.of(context).pushReplacementNamed("geolist");
+                Navigator.of(context)
+                    .pushNamedAndRemoveUntil("geolist", (route) => false);
               },
             );
           } else if (snapshot.hasError) {
