@@ -11,6 +11,10 @@ class FuelstationsDBRepo {
         {await upsert(fuelstation.fuelstationID, fuelstation)});
   }
 
+  Future<void> clearOnInit() async {
+    await _fuelstationsBox.clear();
+  }
+
   Future<void> upsert(int key, FuelstationListEntity fuelstation) async {
     if (this._fuelstationsBox.containsKey(key)) {
       await _fuelstationsBox.putAt(key, fuelstation);

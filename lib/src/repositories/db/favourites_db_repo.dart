@@ -19,6 +19,15 @@ class FavouritesDBRepo {
     }
   }
 
+  Future<void> saveList(List<FuelstationListEntity> list) async {
+    list.forEach((favourite) async =>
+        {await _favouriteBox.put(favourite.fuelstationID, favourite)});
+  }
+
+  Future<void> clearOnInit() async {
+    await _favouriteBox.clear();
+  }
+
   bool isFavourite(int key) {
     return this._favouriteBox.containsKey(key);
   }
