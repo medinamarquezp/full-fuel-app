@@ -36,6 +36,8 @@ dependencies:
   path_provider: ^1.6.24
   http: ^0.12.2
   flutter_dotenv: ^2.1.0
+  url_launcher: ^5.7.10
+  charts_flutter: ^0.9.0
 
 dev_dependencies:
   flutter_test:
@@ -57,6 +59,8 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - lib/assets/
+    - lib/assets/dayChart/
+    - lib/assets/momentsChart/
     - .env
   # - images/a_dot_ham.jpeg
 

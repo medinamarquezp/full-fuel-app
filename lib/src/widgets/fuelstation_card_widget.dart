@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fullfuel_app/src/styles/fullfuel_colors.dart';
+import 'package:fullfuel_app/src/widgets/brand_icon_widget.dart';
 import 'package:fullfuel_app/src/widgets/favourite_button_widget.dart';
 import 'package:fullfuel_app/src/services/geolocation.dart';
 import 'package:fullfuel_app/src/entities/fuel_price_entity.dart';
@@ -11,7 +10,6 @@ class FuelstationCardWidget extends StatelessWidget {
   final FuelstationListEntity fuelstation;
   final double appLatitude;
   final double appLongitude;
-  final _apiURL = DotEnv().env['API_URL'];
 
   FuelstationCardWidget(this.fuelstation, this.appLatitude, this.appLongitude);
 
@@ -21,8 +19,11 @@ class FuelstationCardWidget extends StatelessWidget {
       children: [
         GestureDetector(
           onTap: () => {
-            Navigator.pushNamed(context, 'detail',
-                arguments: {'fuelstationID': fuelstation.fuelstationID})
+            Navigator.pushNamed(context, 'detail', arguments: {
+              'appLatitude': appLatitude,
+              'appLongitude': appLongitude,
+              'fuelstationID': fuelstation.fuelstationID
+            })
           },
           child: Card(
             elevation: 30,
@@ -34,40 +35,32 @@ class FuelstationCardWidget extends StatelessWidget {
                 children: [
                   Container(
                     child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                _cardFuelIconBrand(
-                                    brandLogo: fuelstation.brandImage),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                        BrandIconWidget(brandLogo: fuelstation.brandImage),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _cardTitle(fuelstation.name),
+                              Container(
+                                margin: EdgeInsets.only(top: 8),
+                                child: Row(
                                   children: [
-                                    _cardTitle(fuelstation.name),
-                                    Container(
-                                      margin: EdgeInsets.only(top: 2),
-                                      child: Row(
-                                        children: [
-                                          _cardFuelStationDistance(
-                                              Geolocation.getDistance(
-                                            appLatitude,
-                                            appLongitude,
-                                            fuelstation.latitude,
-                                            fuelstation.longitude,
-                                          )),
-                                          _cardFuelStationIsOpen(
-                                              fuelstation.isNowOpen)
-                                        ],
-                                      ),
-                                    ),
+                                    _cardFuelStationDistance(
+                                        Geolocation.getDistance(
+                                      appLatitude,
+                                      appLongitude,
+                                      fuelstation.latitude,
+                                      fuelstation.longitude,
+                                    )),
+                                    _cardFuelStationIsOpen(
+                                        fuelstation.isNowOpen)
                                   ],
-                                )
-                              ],
-                            ),
-                          ],
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),
@@ -98,24 +91,6 @@ class FuelstationCardWidget extends StatelessWidget {
               id: fuelstation.fuelstationID, fuelstation: fuelstation),
         )
       ],
-    );
-  }
-
-  Container _cardFuelIconBrand({String brandLogo}) {
-    final fuelStationIcon = "lib/assets/gasStationIcon.svg";
-    final noBrandIcon = CircleAvatar(
-      backgroundColor: FullfuelColors.secondary_20,
-      child: SvgPicture.asset(fuelStationIcon,
-          alignment: Alignment.center, width: 18),
-    );
-    final brandIcon = (brandLogo == "")
-        ? noBrandIcon
-        : CircleAvatar(
-            backgroundImage: NetworkImage(_apiURL + brandLogo),
-            backgroundColor: Colors.transparent);
-    return Container(
-      margin: EdgeInsets.only(right: 10),
-      child: brandIcon,
     );
   }
 
