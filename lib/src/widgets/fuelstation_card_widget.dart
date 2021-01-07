@@ -170,10 +170,10 @@ class FuelstationCardWidget extends StatelessWidget {
   }
 
   Icon _cardFuelPricesArrow(String status) {
-    if (status == "DOWN") {
+    if (status == "D") {
       return Icon(Icons.arrow_downward, color: FullfuelColors.down);
     }
-    if (status == "UP") {
+    if (status == "U") {
       return Icon(Icons.arrow_upward, color: FullfuelColors.up);
     }
     return Icon(Icons.import_export, color: FullfuelColors.secondary);
