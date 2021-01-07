@@ -38,6 +38,8 @@ class _AppBottomNavigationBarWidgetState
             icon: Icon(Icons.settings, size: 30), label: "Configuración"),
       ],
       currentIndex: widget.index,
+      backgroundColor: Colors.white,
+      elevation: 10,
       selectedItemColor: FullfuelColors.primary,
       unselectedItemColor: FullfuelColors.secondary_50,
       showSelectedLabels: false,
