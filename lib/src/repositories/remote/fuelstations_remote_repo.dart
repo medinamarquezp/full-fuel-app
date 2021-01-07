@@ -6,6 +6,7 @@ import 'package:fullfuel_app/src/entities/fuelstation_detail_entity.dart';
 
 class FuelstationsRemoteRepo {
   final _apiURL = DotEnv().env['API_URL'];
+  final _apiVersion = DotEnv().env['API_VERSION'];
   final _authorization = DotEnv().env['API_AUTH_KEY'];
   double latitude;
   double longitude;
@@ -15,7 +16,7 @@ class FuelstationsRemoteRepo {
   Future<List<FuelstationListEntity>> fetchFuelstationsListGeo(
       {int radius = 1}) async {
     final url =
-        "$_apiURL/api/fuelstations/list/geo/$latitude/$longitude/$radius";
+        "$_apiURL/$_apiVersion/fuelstations/list/geo/$latitude/$longitude/$radius";
     final rs = await http.get(url, headers: _headers());
     if (rs.statusCode == 200) {
       final rsDecoded = jsonDecode(rs.body);
@@ -29,7 +30,8 @@ class FuelstationsRemoteRepo {
   Future<List<FuelstationListEntity>> fetchFuelstationsListIDs(
       {List<dynamic> listIDs}) async {
     final ids = listIDs.join(",");
-    final url = "$_apiURL/api/fuelstations/list/id/$latitude/$longitude/$ids";
+    final url =
+        "$_apiURL/$_apiVersion/fuelstations/list/id/$latitude/$longitude/$ids";
     final rs = await http.get(url, headers: _headers());
     if (rs.statusCode == 200) {
       final rsDecoded = jsonDecode(rs.body);
@@ -43,7 +45,7 @@ class FuelstationsRemoteRepo {
   Future<FuelstationDetailEntity> fetchFuelstationDetail(
       {int fuelstationID}) async {
     final url =
-        "$_apiURL/api/fuelstations/detail/$latitude/$longitude/$fuelstationID";
+        "$_apiURL/$_apiVersion/fuelstations/detail/$latitude/$longitude/$fuelstationID";
     final rs = await http.get(url, headers: _headers());
     if (rs.statusCode == 200) {
       final rsDecoded = jsonDecode(rs.body);
