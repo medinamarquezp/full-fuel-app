@@ -11,7 +11,10 @@ class FuelstationDetailEntity {
   int bestDay;
   String bestMoment;
   List<PricesExtended> fuelPrices;
-  List<PriceEvolution> monthlyPriceEvolution;
+  int month;
+  List<DayPrice> g95;
+  List<DayPrice> g98;
+  List<DayPrice> gasoil;
 
   FuelstationDetailEntity(
       {this.fuelstationID,
@@ -26,11 +29,17 @@ class FuelstationDetailEntity {
       this.bestDay,
       this.bestMoment,
       this.fuelPrices,
-      this.monthlyPriceEvolution});
+      this.month,
+      this.g95,
+      this.g98,
+      this.gasoil});
 
   factory FuelstationDetailEntity.fromJson(Map<String, dynamic> json) {
     final brandImage = json["brandImage"] != null ? json["brandImage"] : "";
     final coordinates = json["coordinates"];
+    final List<dynamic> g95 = json["monthlyPriceEvolution"]["g95"];
+    final List<dynamic> g98 = json["monthlyPriceEvolution"]["g98"];
+    final List<dynamic> gasoil = json["monthlyPriceEvolution"]["gasoil"];
     return FuelstationDetailEntity(
       fuelstationID: json["fuelstationID"],
       name: json["name"],
@@ -44,8 +53,10 @@ class FuelstationDetailEntity {
       bestDay: json["bestDay"],
       bestMoment: json["bestMoment"],
       fuelPrices: PricesExtended.pricesExtendedListFromMap(json["fuelPrices"]),
-      monthlyPriceEvolution: PriceEvolution.priceEvolutionListFromMap(
-          json["monthlyPriceEvolution"]),
+      month: json["monthlyPriceEvolution"]["month"],
+      g95: (g95.isNotEmpty) ? DayPrice.dayPriceListFromMap(g95) : [],
+      g98: (g98.isNotEmpty) ? DayPrice.dayPriceListFromMap(g98) : [],
+      gasoil: (gasoil.isNotEmpty) ? DayPrice.dayPriceListFromMap(gasoil) : [],
     );
   }
 }
@@ -81,26 +92,17 @@ class PricesExtended {
   }
 }
 
-class PriceEvolution {
-  int month;
+class DayPrice {
   int day;
-  String fuelType;
   double price;
 
-  PriceEvolution({this.month, this.day, this.fuelType, this.price});
+  DayPrice({this.day, this.price});
 
-  factory PriceEvolution.fromJson(Map<String, dynamic> json) {
-    return PriceEvolution(
-        month: json["month"],
-        day: json["day"],
-        fuelType: json["fuelType"],
-        price: json["price"]);
+  factory DayPrice.fromJson(Map<String, dynamic> json) {
+    return DayPrice(day: json["day"], price: double.parse(json["price"]));
   }
 
-  static List<PriceEvolution> priceEvolutionListFromMap(
-      List<dynamic> pricesEvolution) {
-    return pricesEvolution
-        .map((priceEvolution) => PriceEvolution.fromJson(priceEvolution))
-        .toList();
+  static List<DayPrice> dayPriceListFromMap(List<dynamic> dayprices) {
+    return dayprices.map((dayPrice) => DayPrice.fromJson(dayPrice)).toList();
   }
 }

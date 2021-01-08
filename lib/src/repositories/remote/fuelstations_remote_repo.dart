@@ -48,8 +48,8 @@ class FuelstationsRemoteRepo {
         "$_apiURL/$_apiVersion/fuelstations/detail/$latitude/$longitude/$fuelstationID";
     final rs = await http.get(url, headers: _headers());
     if (rs.statusCode == 200) {
-      final rsDecoded = jsonDecode(rs.body);
-      final response = rsDecoded["response"] as FuelstationDetailEntity;
+      final Map<String, dynamic> rsDecoded = jsonDecode(rs.body);
+      final response = FuelstationDetailEntity.fromJson(rsDecoded["response"]);
       return response;
     } else {
       throw Exception('Failed to fetch fuelstation detail');
