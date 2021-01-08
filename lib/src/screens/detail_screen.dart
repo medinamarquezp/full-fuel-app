@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:fullfuel_app/src/content/months.dart';
+import 'package:fullfuel_app/src/content/week_days.dart';
+import 'package:fullfuel_app/src/content/moments.dart';
 import 'package:fullfuel_app/src/styles/fullfuel_colors.dart';
 import 'package:fullfuel_app/src/services/geolocation.dart';
 import 'package:fullfuel_app/src/services/open_maps.dart';
@@ -7,6 +10,8 @@ import 'package:fullfuel_app/src/widgets/app_bar_widget.dart';
 import 'package:fullfuel_app/src/widgets/linear_chart_widget.dart';
 import 'package:fullfuel_app/src/widgets/brand_icon_widget.dart';
 import 'package:fullfuel_app/src/widgets/app_bottom_navigation_bar_widget.dart';
+import 'package:fullfuel_app/src/entities/fuelstation_detail_entity.dart';
+import 'package:fullfuel_app/src/repositories/remote/fuelstations_remote_repo.dart';
 
 class DetailScreen extends StatefulWidget {
   DetailScreen({Key key}) : super(key: key);
@@ -20,6 +25,15 @@ class _DetailScreenState extends State<DetailScreen> {
   double appLongitude;
   int fuelstationID;
 
+  Future<FuelstationDetailEntity> _getFuelstationDetail() async {
+    FuelstationsRemoteRepo remote =
+        new FuelstationsRemoteRepo(appLatitude, appLongitude);
+    final fuelstationDetail =
+        await remote.fetchFuelstationDetail(fuelstationID: fuelstationID);
+    print(fuelstationDetail);
+    return fuelstationDetail;
+  }
+
   @override
   Widget build(BuildContext context) {
     final Map arguments = ModalRoute.of(context).settings.arguments as Map;
@@ -31,23 +45,38 @@ class _DetailScreenState extends State<DetailScreen> {
       backgroundColor: Colors.white,
       appBar: AppBarWidget(),
       body: SafeArea(
-        child: ListView(
-          children: [
-            _headData(
-                name: "Estación de servicio Galp",
-                address: "CL MANISITU, 9. ALEGRIA-DULANTZI, ÁLAVA",
-                lat: 39.557861,
-                lng: 2.682333,
-                timetable: "L-D: 24h"),
-            _content()
-          ],
+        child: FutureBuilder(
+          future: _getFuelstationDetail(),
+          builder: (BuildContext context,
+              AsyncSnapshot<FuelstationDetailEntity> snapshot) {
+            if (snapshot.hasData) {
+              final fs = snapshot.data;
+              return ListView(
+                children: [
+                  _headData(
+                      logo: fs.brandImage,
+                      name: fs.name,
+                      address: fs.address,
+                      lat: fs.latitude,
+                      lng: fs.longitude,
+                      timetable: fs.timetable),
+                  _content(fs.month, fs.bestDay, fs.bestMoment, fs.fuelPrices)
+                ],
+              );
+            } else if (snapshot.hasError) {
+              // TODO: Catch error
+              print(snapshot.error);
+            }
+            return Container();
+          },
         ),
       ),
       bottomNavigationBar: AppBottomNavigationBarWidget(index: 0),
     );
   }
 
-  Container _content() {
+  Container _content(int month, int bestDay, String bestMoment,
+      List<PricesExtended> fuelPrices) {
     return Container(
       margin: EdgeInsets.only(top: 20),
       padding: EdgeInsets.symmetric(vertical: 20),
@@ -55,19 +84,19 @@ class _DetailScreenState extends State<DetailScreen> {
       width: double.infinity,
       child: Column(
         children: [
-          _pricesContainer(),
-          _priceEvolutionChart(),
-          _bestMomentsCharts()
+          _pricesContainer(fuelPrices),
+          _priceEvolutionChart(month),
+          _bestMomentsCharts(bestDay, bestMoment)
         ],
       ),
     );
   }
 
-  Container _bestMomentsCharts() {
+  Container _bestMomentsCharts(int bestDay, String bestMoment) {
     return Container(
       margin: EdgeInsets.only(top: 20),
       child: Row(
-        children: [_bestDay(6), _bestMoment("nigth")],
+        children: [_bestDay(bestDay), _bestMoment(bestMoment)],
       ),
     );
   }
@@ -75,30 +104,13 @@ class _DetailScreenState extends State<DetailScreen> {
   Container _bestDay(int day) {
     final title = "Mejor día";
     final iconPath = "lib/assets/dayChart/$day.svg";
-    const weekDays = [
-      "DOMINGO",
-      "LUNES",
-      "MARTES",
-      "MIÉRCOLES",
-      "JUEVES",
-      "VIERNES",
-      "SÁBADO"
-    ];
     return _bestContainer(title, iconPath, weekDays[day]);
   }
 
   Container _bestMoment(String moment) {
     final title = "Mejor momento";
     final iconPath = "lib/assets/momentsChart/$moment.svg";
-    String content;
-    if (moment == "morning") {
-      content = "Mañana";
-    } else if (moment == "afternoom") {
-      content = "Tarde";
-    } else {
-      content = "Noche";
-    }
-
+    final content = getMoments(moment);
     return _bestContainer(title, iconPath, content);
   }
 
@@ -129,8 +141,10 @@ class _DetailScreenState extends State<DetailScreen> {
     );
   }
 
-  Container _priceEvolutionChart() {
-    final title = "Evolución de precios";
+  Container _priceEvolutionChart(int month) {
+    final currentMonth = months[month - 1];
+    final currentYear = new DateTime.now().year;
+    final title = "Evolución de precios $currentMonth $currentYear";
     final titleTextStyles =
         TextStyle(color: FullfuelColors.primary, fontSize: 16);
     return Container(
@@ -151,17 +165,28 @@ class _DetailScreenState extends State<DetailScreen> {
     );
   }
 
-  Row _pricesContainer() {
+  Row _pricesContainer(List<PricesExtended> fuelPrices) {
     return Row(
       children: [
-        _priceContainer(fuelName: "Gasoil", price: 1.234, status: "UP"),
-        _priceContainer(fuelName: "Gasolina 95", price: 1.234, status: "DOWN"),
-        _priceContainer(fuelName: "Gasolina 98", price: 1.234, status: "EQUALS")
+        for (final fuelprice in fuelPrices)
+          _priceContainer(
+              fuelName: fuelprice.fuelType,
+              price: fuelprice.price,
+              status: fuelprice.evolution,
+              min: fuelprice.min,
+              avg: fuelprice.avg,
+              max: fuelprice.max)
       ],
     );
   }
 
-  Container _priceContainer({String fuelName, double price, String status}) {
+  Container _priceContainer(
+      {String fuelName,
+      double price,
+      String status,
+      double min,
+      double avg,
+      double max}) {
     return Container(
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(4), color: Colors.white),
@@ -172,9 +197,9 @@ class _DetailScreenState extends State<DetailScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _price(fuelName, price, status),
-          _priceEvolution("Mín.", 1.23),
-          _priceEvolution("Med.", 1.23),
-          _priceEvolution("Max.", 1.23)
+          _priceEvolution("Mín.", min),
+          _priceEvolution("Med.", avg),
+          _priceEvolution("Max.", max)
         ],
       ),
     );
@@ -243,17 +268,22 @@ class _DetailScreenState extends State<DetailScreen> {
   }
 
   Icon _pricesArrow(String status) {
-    if (status == "DOWN") {
+    if (status == "D") {
       return Icon(Icons.arrow_downward, size: 28, color: FullfuelColors.down);
     }
-    if (status == "UP") {
+    if (status == "U") {
       return Icon(Icons.arrow_upward, size: 28, color: FullfuelColors.up);
     }
     return Icon(Icons.import_export, size: 28, color: FullfuelColors.secondary);
   }
 
   Container _headData(
-      {String name, String address, double lat, double lng, String timetable}) {
+      {String logo,
+      String name,
+      String address,
+      double lat,
+      double lng,
+      String timetable}) {
     final _titleTextStyles = TextStyle(
         fontSize: 22,
         fontWeight: FontWeight.bold,
@@ -266,7 +296,7 @@ class _DetailScreenState extends State<DetailScreen> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          BrandIconWidget(size: "BIG"),
+          BrandIconWidget(brandLogo: logo, size: "BIG"),
           Expanded(
             child: Column(
               children: [
