@@ -299,6 +299,7 @@ class _DetailScreenState extends State<DetailScreen> {
           BrandIconWidget(brandLogo: logo, size: "BIG"),
           Expanded(
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
                   margin: EdgeInsets.only(bottom: 5),
