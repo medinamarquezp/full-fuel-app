@@ -69,7 +69,7 @@ class _DetailScreenState extends State<DetailScreen> {
               // TODO: Catch error
               print(snapshot.error);
             }
-            return Container();
+            return _isLoading();
           },
         ),
       ),
@@ -379,6 +379,25 @@ class _DetailScreenState extends State<DetailScreen> {
             margin: EdgeInsets.only(left: 5),
             child: Text(timetable,
                 style: TextStyle(color: FullfuelColors.primary, fontSize: 15)),
+          )
+        ],
+      ),
+    );
+  }
+
+  Center _isLoading() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          SizedBox(
+            child: CircularProgressIndicator(
+              valueColor:
+                  new AlwaysStoppedAnimation<Color>(FullfuelColors.primary),
+            ),
+            width: 60,
+            height: 60,
           )
         ],
       ),
