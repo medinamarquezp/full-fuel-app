@@ -60,6 +60,7 @@ class _DetailScreenState extends State<DetailScreen> {
                       address: fs.address,
                       lat: fs.latitude,
                       lng: fs.longitude,
+                      isNowOpen: fs.isNowOpen,
                       timetable: fs.timetable),
                   _content(fs.bestDay, fs.bestMoment, fs.fuelPrices)
                 ],
@@ -284,6 +285,7 @@ class _DetailScreenState extends State<DetailScreen> {
       String address,
       double lat,
       double lng,
+      bool isNowOpen,
       String timetable}) {
     final _titleTextStyles = TextStyle(
         fontSize: 22,
@@ -316,7 +318,7 @@ class _DetailScreenState extends State<DetailScreen> {
                 ),
                 Container(
                   margin: EdgeInsets.only(bottom: 5),
-                  child: _isOpen(true, timetable),
+                  child: _isOpen(isNowOpen, timetable),
                 )
               ],
             ),
