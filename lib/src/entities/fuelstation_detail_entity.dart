@@ -11,10 +11,6 @@ class FuelstationDetailEntity {
   int bestDay;
   String bestMoment;
   List<PricesExtended> fuelPrices;
-  int month;
-  List<DayPrice> g95;
-  List<DayPrice> g98;
-  List<DayPrice> gasoil;
 
   FuelstationDetailEntity(
       {this.fuelstationID,
@@ -28,36 +24,25 @@ class FuelstationDetailEntity {
       this.isNowOpen,
       this.bestDay,
       this.bestMoment,
-      this.fuelPrices,
-      this.month,
-      this.g95,
-      this.g98,
-      this.gasoil});
+      this.fuelPrices});
 
   factory FuelstationDetailEntity.fromJson(Map<String, dynamic> json) {
     final brandImage = json["brandImage"] != null ? json["brandImage"] : "";
     final coordinates = json["coordinates"];
-    final List<dynamic> g95 = json["monthlyPriceEvolution"]["g95"];
-    final List<dynamic> g98 = json["monthlyPriceEvolution"]["g98"];
-    final List<dynamic> gasoil = json["monthlyPriceEvolution"]["gasoil"];
     return FuelstationDetailEntity(
-      fuelstationID: json["fuelstationID"],
-      name: json["name"],
-      brandImage: brandImage,
-      address: json["address"],
-      distance: json["distance"],
-      latitude: coordinates["latitude"],
-      longitude: coordinates["longitude"],
-      timetable: json["timetable"],
-      isNowOpen: json["isNowOpen"],
-      bestDay: json["bestDay"],
-      bestMoment: json["bestMoment"],
-      fuelPrices: PricesExtended.pricesExtendedListFromMap(json["fuelPrices"]),
-      month: json["monthlyPriceEvolution"]["month"],
-      g95: (g95.isNotEmpty) ? DayPrice.dayPriceListFromMap(g95) : [],
-      g98: (g98.isNotEmpty) ? DayPrice.dayPriceListFromMap(g98) : [],
-      gasoil: (gasoil.isNotEmpty) ? DayPrice.dayPriceListFromMap(gasoil) : [],
-    );
+        fuelstationID: json["fuelstationID"],
+        name: json["name"],
+        brandImage: brandImage,
+        address: json["address"],
+        distance: json["distance"],
+        latitude: coordinates["latitude"],
+        longitude: coordinates["longitude"],
+        timetable: json["timetable"],
+        isNowOpen: json["isNowOpen"],
+        bestDay: json["bestDay"],
+        bestMoment: json["bestMoment"],
+        fuelPrices:
+            PricesExtended.pricesExtendedListFromMap(json["fuelPrices"]));
   }
 }
 
@@ -68,6 +53,7 @@ class PricesExtended {
   double min;
   double max;
   double avg;
+  MonthlyPriceEvolution monthlyPriceEvolution;
 
   PricesExtended(
       {this.fuelType,
@@ -75,7 +61,8 @@ class PricesExtended {
       this.evolution,
       this.min,
       this.max,
-      this.avg});
+      this.avg,
+      this.monthlyPriceEvolution});
 
   factory PricesExtended.fromJson(Map<String, dynamic> json) {
     return PricesExtended(
@@ -84,11 +71,29 @@ class PricesExtended {
         evolution: json["evolution"],
         min: json["min"],
         max: json["max"],
-        avg: json["avg"]);
+        avg: json["avg"],
+        monthlyPriceEvolution:
+            MonthlyPriceEvolution.fromJson(json["monthlyPriceEvolution"]));
   }
 
-  static List<PricesExtended> pricesExtendedListFromMap(List<dynamic> prices) {
-    return prices.map((price) => PricesExtended.fromJson(price)).toList();
+  static List<PricesExtended> pricesExtendedListFromMap(
+      List<dynamic> fuelPrices) {
+    return fuelPrices.map((fp) => PricesExtended.fromJson(fp)).toList();
+  }
+}
+
+class MonthlyPriceEvolution {
+  int month;
+  int year;
+  List<DayPrice> prices;
+
+  MonthlyPriceEvolution({this.month, this.year, this.prices});
+
+  factory MonthlyPriceEvolution.fromJson(Map<String, dynamic> json) {
+    return MonthlyPriceEvolution(
+        month: json["month"],
+        year: json["year"],
+        prices: DayPrice.dayPriceListFromMap(json["prices"]));
   }
 }
 

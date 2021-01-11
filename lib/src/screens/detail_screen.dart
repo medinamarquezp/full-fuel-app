@@ -10,6 +10,7 @@ import 'package:fullfuel_app/src/widgets/app_bar_widget.dart';
 import 'package:fullfuel_app/src/widgets/linear_chart_widget.dart';
 import 'package:fullfuel_app/src/widgets/brand_icon_widget.dart';
 import 'package:fullfuel_app/src/widgets/app_bottom_navigation_bar_widget.dart';
+import 'package:fullfuel_app/src/entities/fuel_price_entity.dart';
 import 'package:fullfuel_app/src/entities/fuelstation_detail_entity.dart';
 import 'package:fullfuel_app/src/repositories/remote/fuelstations_remote_repo.dart';
 
@@ -60,7 +61,7 @@ class _DetailScreenState extends State<DetailScreen> {
                       lat: fs.latitude,
                       lng: fs.longitude,
                       timetable: fs.timetable),
-                  _content(fs.month, fs.bestDay, fs.bestMoment, fs.fuelPrices)
+                  _content(fs.bestDay, fs.bestMoment, fs.fuelPrices)
                 ],
               );
             } else if (snapshot.hasError) {
@@ -75,8 +76,8 @@ class _DetailScreenState extends State<DetailScreen> {
     );
   }
 
-  Container _content(int month, int bestDay, String bestMoment,
-      List<PricesExtended> fuelPrices) {
+  Container _content(
+      int bestDay, String bestMoment, List<PricesExtended> fuelPrices) {
     return Container(
       margin: EdgeInsets.only(top: 20),
       padding: EdgeInsets.symmetric(vertical: 20),
@@ -85,7 +86,7 @@ class _DetailScreenState extends State<DetailScreen> {
       child: Column(
         children: [
           _pricesContainer(fuelPrices),
-          _priceEvolutionChart(month),
+          _priceEvolutionChart(fuelPrices),
           _bestMomentsCharts(bestDay, bestMoment)
         ],
       ),
@@ -141,10 +142,10 @@ class _DetailScreenState extends State<DetailScreen> {
     );
   }
 
-  Container _priceEvolutionChart(int month) {
-    final currentMonth = months[month - 1];
-    final currentYear = new DateTime.now().year;
-    final title = "Evolución de precios $currentMonth $currentYear";
+  Container _priceEvolutionChart(List<PricesExtended> fuelPrices) {
+    final month = months[fuelPrices.first.monthlyPriceEvolution.month - 1];
+    final year = fuelPrices.first.monthlyPriceEvolution.year;
+    final title = "Evolución de precios $month $year";
     final titleTextStyles =
         TextStyle(color: FullfuelColors.primary, fontSize: 16);
     return Container(
@@ -170,7 +171,7 @@ class _DetailScreenState extends State<DetailScreen> {
       children: [
         for (final fuelprice in fuelPrices)
           _priceContainer(
-              fuelName: fuelprice.fuelType,
+              fuelName: FuelPriceEntity.getFuelNameFromType(fuelprice.fuelType),
               price: fuelprice.price,
               status: fuelprice.evolution,
               min: fuelprice.min,
