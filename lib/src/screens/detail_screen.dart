@@ -31,7 +31,6 @@ class _DetailScreenState extends State<DetailScreen> {
         new FuelstationsRemoteRepo(appLatitude, appLongitude);
     final fuelstationDetail =
         await remote.fetchFuelstationDetail(fuelstationID: fuelstationID);
-    print(fuelstationDetail);
     return fuelstationDetail;
   }
 
@@ -160,7 +159,7 @@ class _DetailScreenState extends State<DetailScreen> {
           Container(
             width: double.infinity,
             height: 220,
-            child: LinearChartWidget.withSampleData(),
+            child: LinearChartWidget.create(fuelPrices),
           )
         ],
       ),
