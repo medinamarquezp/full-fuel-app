@@ -44,7 +44,7 @@ class FuelstationCardWidget extends StatelessWidget {
                             children: [
                               _cardTitle(fuelstation.name),
                               Container(
-                                margin: EdgeInsets.only(top: 8),
+                                margin: EdgeInsets.only(top: 4),
                                 child: Row(
                                   children: [
                                     _cardFuelStationDistance(
