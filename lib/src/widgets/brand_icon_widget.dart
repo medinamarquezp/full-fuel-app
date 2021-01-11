@@ -25,6 +25,7 @@ class BrandIconWidget extends StatelessWidget {
     final brandIcon = (brandLogo == "")
         ? noBrandIcon
         : CircleAvatar(
+            radius: _radius,
             backgroundImage: NetworkImage(_apiURL + brandLogo),
             backgroundColor: Colors.transparent);
     return Container(
