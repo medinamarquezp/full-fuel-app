@@ -39,7 +39,7 @@ class LinearChartWidget extends StatelessWidget {
 
   List<charts.TickSpec<num>> getPrimaryAxisList(double min, double max) {
     List<charts.TickSpec<num>> axisList = [];
-    double increment = 0.020;
+    double increment = (max - min) / 6;
     double value = min;
     double maxAxis = max + increment;
     do {
