@@ -23,7 +23,7 @@ class _GeolistScreenState extends State<GeolistScreen> {
           appBar: AppBarWidget(),
           body: Column(
             children: [
-              _distance(),
+              _distance(context),
               Expanded(
                 child: GlowingOverscrollIndicator(
                   axisDirection: AxisDirection.down,
@@ -53,7 +53,7 @@ class _GeolistScreenState extends State<GeolistScreen> {
     );
   }
 
-  Row _distance() {
+  Row _distance(BuildContext context) {
     final label = "15 km.";
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -64,7 +64,9 @@ class _GeolistScreenState extends State<GeolistScreen> {
           padding: EdgeInsets.all(10),
           avatar: Icon(Icons.room, color: FullfuelColors.secondary, size: 20),
           label: Text(label),
-          onPressed: () {},
+          onPressed: () {
+            Navigator.pushNamed(context, "config");
+          },
         ),
       ],
     );
