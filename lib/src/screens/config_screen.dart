@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+import 'package:toast/toast.dart';
+import 'package:progress_indicator_button/progress_button.dart';
 import 'package:fullfuel_app/src/styles/fullfuel_colors.dart';
 import 'package:fullfuel_app/src/widgets/app_bar_widget.dart';
 import 'package:fullfuel_app/src/widgets/app_bottom_navigation_bar_widget.dart';
+import 'package:fullfuel_app/src/entities/fuelstation_list_entity.dart';
+import 'package:fullfuel_app/src/repositories/db/fuelstations_db_repo.dart';
+import 'package:fullfuel_app/src/repositories/remote/fuelstations_remote_repo.dart';
 
 class ConfigScreen extends StatefulWidget {
   ConfigScreen({Key key}) : super(key: key);
@@ -13,8 +18,42 @@ class ConfigScreen extends StatefulWidget {
 
 class _ConfigScreen extends State<ConfigScreen> {
   final configBox = Hive.box('config');
-  double _searchRadiusValue = 5;
-  bool _showOnlyOpen = false;
+  double _searchRadiusValue;
+  bool _showOnlyOpen;
+
+  @override
+  void initState() {
+    super.initState();
+    _showOnlyOpen = configBox.get("showOnlyOpen", defaultValue: false);
+    _searchRadiusValue = configBox.get("searchRadiusValue", defaultValue: 5.0);
+  }
+
+  Future<void> _saveConfig(AnimationController controller) async {
+    controller.forward();
+    await configBox.put("searchRadiusValue", _searchRadiusValue);
+    await configBox.put("showOnlyOpen", _showOnlyOpen);
+    List<FuelstationListEntity> fuelstations = await _getRemoteFuelstations();
+    await _cacheFuelstations(fuelstations);
+    controller.reset();
+    Toast.show("Cambios realizados correctamente", context,
+        duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+  }
+
+  Future<List<FuelstationListEntity>> _getRemoteFuelstations() async {
+    FuelstationsRemoteRepo remote = FuelstationsRemoteRepo(
+        configBox.get("latitude"), configBox.get("longitude"));
+    final fuelstations = await remote.fetchFuelstationsListGeo(
+        radius: _searchRadiusValue.toInt(), showOnlyOpen: _showOnlyOpen);
+    return fuelstations;
+  }
+
+  Future<void> _cacheFuelstations(
+      List<FuelstationListEntity> fuelstations) async {
+    final fuelstationsBox = Hive.box<FuelstationListEntity>('fuelstations');
+    final dbRepo = FuelstationsDBRepo(fuelstationsBox);
+    await dbRepo.clearOnInit();
+    await dbRepo.saveList(fuelstations);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -109,14 +148,17 @@ class _ConfigScreen extends State<ConfigScreen> {
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [Text(label.toUpperCase(), style: labelTextStyles), widget],
+        children: [
+          Text(label.toUpperCase(), style: labelTextStyles),
+          widget,
+        ],
       ),
     );
   }
 
   Expanded _bottomButton() {
     final label = "Guardar condiguración";
-    final labelTextStyles = TextStyle(fontSize: 16);
+    final labelTextStyles = TextStyle(fontSize: 16, color: Colors.white);
     return Expanded(
       child: Align(
         alignment: Alignment.bottomCenter,
@@ -124,14 +166,16 @@ class _ConfigScreen extends State<ConfigScreen> {
           width: double.infinity,
           height: 60,
           margin: EdgeInsets.only(left: 20, right: 20, bottom: 40),
-          child: RaisedButton(
+          child: ProgressButton(
             color: FullfuelColors.action,
-            textColor: Colors.white,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(4.0),
+            borderRadius: BorderRadius.all(Radius.circular(4)),
+            child: Text(
+              label.toUpperCase(),
+              style: labelTextStyles,
             ),
-            onPressed: () => {},
-            child: Text(label.toUpperCase(), style: labelTextStyles),
+            onPressed: (AnimationController controller) async {
+              await _saveConfig(controller);
+            },
           ),
         ),
       ),
