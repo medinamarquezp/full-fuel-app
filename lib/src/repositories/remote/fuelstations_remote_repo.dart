@@ -14,9 +14,9 @@ class FuelstationsRemoteRepo {
   FuelstationsRemoteRepo(this.latitude, this.longitude);
 
   Future<List<FuelstationListEntity>> fetchFuelstationsListGeo(
-      {int radius = 1}) async {
+      {int radius = 1, showOnlyOpen = false}) async {
     final url =
-        "$_apiURL/$_apiVersion/fuelstations/list/geo/$latitude/$longitude/$radius";
+        "$_apiURL/$_apiVersion/fuelstations/list/geo/$latitude/$longitude/$radius/$showOnlyOpen";
     final rs = await http.get(url, headers: _headers());
     if (rs.statusCode == 200) {
       final rsDecoded = jsonDecode(rs.body);
