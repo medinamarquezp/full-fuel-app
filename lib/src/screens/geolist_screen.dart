@@ -15,6 +15,15 @@ class GeolistScreen extends StatefulWidget {
 }
 
 class _GeolistScreenState extends State<GeolistScreen> {
+  final configBox = Hive.box('config');
+  double _searchRadiusValue;
+
+  @override
+  void initState() {
+    super.initState();
+    _searchRadiusValue = configBox.get("searchRadiusValue", defaultValue: 5.0);
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -38,7 +47,6 @@ class _GeolistScreenState extends State<GeolistScreen> {
   }
 
   ListView _fuelstationsList() {
-    final configBox = Hive.box('config');
     final latitude = configBox.get('latitude');
     final longitude = configBox.get('longitude');
     final fuelstationsBox = Hive.box<FuelstationListEntity>('fuelstations');
@@ -54,7 +62,7 @@ class _GeolistScreenState extends State<GeolistScreen> {
   }
 
   Row _distance(BuildContext context) {
-    final label = "15 km.";
+    final label = "${_searchRadiusValue.toInt()} km.";
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
