@@ -363,7 +363,7 @@ class _DetailScreenState extends State<DetailScreen> {
   Container _isOpen(bool isOpen, String timetable) {
     final isOpenContent = (isOpen) ? "ABIERTA" : "CERRADA";
     return Container(
-      child: Row(
+      child: Wrap(
         children: [
           Container(
             margin: EdgeInsets.only(right: 3),
