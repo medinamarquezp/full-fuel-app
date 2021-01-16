@@ -12,6 +12,7 @@ class Database {
       ..registerAdapter(FuelPriceEntityAdapter());
     await Hive.openBox<FuelstationListEntity>('fuelstations');
     await Hive.openBox<FuelstationListEntity>('favourites');
+    await Hive.openBox('notifications');
     await Hive.openBox('config');
   }
 }
