@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:fullfuel_app/src/styles/fullfuel_colors.dart';
-import 'package:fullfuel_app/src/widgets/app_bar_widget.dart';
+import 'package:fullfuel_app/src/widgets/safe_scaffold_widget.dart';
+import 'package:fullfuel_app/src/widgets/icon_message_widget.dart';
 import 'package:fullfuel_app/src/widgets/fuelstation_card_widget.dart';
-import 'package:fullfuel_app/src/widgets/app_bottom_navigation_bar_widget.dart';
 import 'package:fullfuel_app/src/entities/fuelstation_list_entity.dart';
 import 'package:fullfuel_app/src/repositories/db/favourites_db_repo.dart';
 
@@ -21,24 +19,10 @@ class _FavouritesScreen extends State<FavouritesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: FullfuelColors.secondary_5,
-        appBar: AppBarWidget(),
-        body: Column(
-          children: [
-            _favouritesTitle(),
-            Expanded(
-              child: GlowingOverscrollIndicator(
-                axisDirection: AxisDirection.down,
-                color: FullfuelColors.primary,
-                child: _buildList(),
-              ),
-            ),
-          ],
-        ),
-        bottomNavigationBar: AppBottomNavigationBarWidget(index: 1),
-      ),
+    return SafeScaffoldWidget(
+      pageTitle: "Mis gasolineras favoritas",
+      page: _buildList(),
+      pageIndex: 1,
     );
   }
 
@@ -50,7 +34,10 @@ class _FavouritesScreen extends State<FavouritesScreen> {
           Hive.box<FuelstationListEntity>('favourites').listenable(),
       builder: (context, box, _) {
         if (box.values.isEmpty) {
-          return _noFavourites();
+          return IconMessageWidget(
+            iconPath: "lib/assets/favouritesDashed.svg",
+            title: "NO TIENES GASOLINERAS FAVORITAS",
+          );
         } else {
           return ListView.builder(
             itemCount: box.values.length,
@@ -63,42 +50,6 @@ class _FavouritesScreen extends State<FavouritesScreen> {
           );
         }
       },
-    );
-  }
-
-  Container _favouritesTitle() {
-    final content = "Mis gasolineras favoritas";
-    final styles = TextStyle(color: FullfuelColors.primary, fontSize: 16);
-    return Container(
-      margin: EdgeInsets.only(top: 30, left: 20),
-      width: double.infinity,
-      child:
-          Text(content.toUpperCase(), style: styles, textAlign: TextAlign.left),
-    );
-  }
-
-  Column _noFavourites() {
-    return Column(children: [_favouritesDashed(), _noFavouritesTitle()]);
-  }
-
-  Container _favouritesDashed() {
-    final favouritesDashed = "lib/assets/favouritesDashed.svg";
-    return Container(
-      alignment: Alignment.center,
-      margin: EdgeInsets.only(top: 40, bottom: 20),
-      child: SvgPicture.asset(favouritesDashed,
-          alignment: Alignment.center, width: 220),
-    );
-  }
-
-  Container _noFavouritesTitle() {
-    final content = "NO TIENES GASOLINERAS FAVORITAS";
-    final styles = TextStyle(
-        color: FullfuelColors.primary,
-        fontWeight: FontWeight.bold,
-        fontSize: 16);
-    return Container(
-      child: Text(content, style: styles, textAlign: TextAlign.center),
     );
   }
 }
