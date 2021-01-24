@@ -3,6 +3,7 @@ import 'package:fullfuel_app/src/screens/splash_screen.dart';
 import 'package:fullfuel_app/src/screens/network_error_screen.dart';
 import 'package:fullfuel_app/src/screens/geolist_screen.dart';
 import 'package:fullfuel_app/src/screens/favourites_screen.dart';
+import 'package:fullfuel_app/src/screens/notifications_form.dart';
 import 'package:fullfuel_app/src/screens/notifications_screen.dart';
 import 'package:fullfuel_app/src/screens/detail_screen.dart';
 import 'package:fullfuel_app/src/screens/config_screen.dart';
@@ -14,6 +15,7 @@ Map<String, Widget Function(BuildContext)> getAppRoutes() {
     "geolist": (context) => GeolistScreen(),
     "favourites": (context) => FavouritesScreen(),
     "notifications": (context) => NotificationsScreen(),
+    "notificationsForm": (context) => NotificationsForm(),
     "detail": (context) => DetailScreen(),
     "config": (context) => ConfigScreen(),
   };
