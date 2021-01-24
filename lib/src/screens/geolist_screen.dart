@@ -16,12 +16,12 @@ class GeolistScreen extends StatefulWidget {
 
 class _GeolistScreenState extends State<GeolistScreen> {
   final configBox = Hive.box('config');
-  double _searchRadiusValue;
+  int _searchRadiusValue;
 
   @override
   void initState() {
     super.initState();
-    _searchRadiusValue = configBox.get("searchRadiusValue", defaultValue: 5.0);
+    _searchRadiusValue = configBox.get("searchRadiusValue", defaultValue: 5);
   }
 
   @override
@@ -62,7 +62,7 @@ class _GeolistScreenState extends State<GeolistScreen> {
   }
 
   Row _distance(BuildContext context) {
-    final label = "${_searchRadiusValue.toInt()} km.";
+    final label = "$_searchRadiusValue km.";
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [

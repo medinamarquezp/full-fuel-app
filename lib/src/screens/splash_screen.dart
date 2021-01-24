@@ -17,14 +17,14 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
   final configBox = Hive.box('config');
-  double _searchRadiusValue;
+  int _searchRadiusValue;
   bool _showOnlyOpen;
 
   @override
   void initState() {
     super.initState();
     _showOnlyOpen = configBox.get("showOnlyOpen", defaultValue: false);
-    _searchRadiusValue = configBox.get("searchRadiusValue", defaultValue: 5.0);
+    _searchRadiusValue = configBox.get("searchRadiusValue", defaultValue: 5);
   }
 
   Future<bool> _fetchData() async {
@@ -53,7 +53,7 @@ class _SplashScreenState extends State<SplashScreen> {
   Future<List<FuelstationListEntity>> _getRemoteFuelstations() async {
     FuelstationsRemoteRepo remote = await _initRemote();
     final fuelstations = await remote.fetchFuelstationsListGeo(
-        radius: _searchRadiusValue.toInt(), showOnlyOpen: _showOnlyOpen);
+        radius: _searchRadiusValue, showOnlyOpen: _showOnlyOpen);
     return fuelstations;
   }
 

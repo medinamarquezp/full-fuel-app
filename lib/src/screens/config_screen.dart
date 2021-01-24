@@ -18,7 +18,7 @@ class ConfigScreen extends StatefulWidget {
 
 class _ConfigScreen extends State<ConfigScreen> {
   final configBox = Hive.box('config');
-  double _searchRadiusValue;
+  int _searchRadiusValue;
   bool _showOnlyOpen;
   AnimationController animController;
 
@@ -26,7 +26,7 @@ class _ConfigScreen extends State<ConfigScreen> {
   void initState() {
     super.initState();
     _showOnlyOpen = configBox.get("showOnlyOpen", defaultValue: false);
-    _searchRadiusValue = configBox.get("searchRadiusValue", defaultValue: 5.0);
+    _searchRadiusValue = configBox.get("searchRadiusValue", defaultValue: 5);
   }
 
   Future<void> _saveConfig(AnimationController controller) async {
@@ -44,7 +44,7 @@ class _ConfigScreen extends State<ConfigScreen> {
     FuelstationsRemoteRepo remote = FuelstationsRemoteRepo(
         configBox.get("latitude"), configBox.get("longitude"));
     final fuelstations = await remote.fetchFuelstationsListGeo(
-        radius: _searchRadiusValue.toInt(), showOnlyOpen: _showOnlyOpen);
+        radius: _searchRadiusValue, showOnlyOpen: _showOnlyOpen);
     return fuelstations;
   }
 
@@ -79,18 +79,18 @@ class _ConfigScreen extends State<ConfigScreen> {
   }
 
   FormFieldContainerWidget _searchRadius() {
-    final label = "Radio de búsqueda (${_searchRadiusValue.toInt()} KM)";
+    final label = "Radio de búsqueda ($_searchRadiusValue KM)";
     final widget = Slider(
       inactiveColor: FullfuelColors.secondary_30,
       activeColor: FullfuelColors.primary,
-      value: _searchRadiusValue,
+      value: _searchRadiusValue.toDouble(),
       min: 5,
       max: 30,
       divisions: 5,
       label: _searchRadiusValue.round().toString(),
       onChanged: (double value) {
         setState(() {
-          _searchRadiusValue = value;
+          _searchRadiusValue = value.toInt();
         });
       },
     );

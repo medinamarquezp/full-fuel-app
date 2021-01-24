@@ -44,7 +44,7 @@ class FuelstationListEntity {
     return FuelstationListEntity(
         fuelstationID: json["fuelstationID"],
         name: json["name"],
-        distance: json["distance"],
+        distance: json["distance"].toDouble(),
         latitude: coordinates["latitude"],
         longitude: coordinates["longitude"],
         isNowOpen: json["isNowOpen"],
