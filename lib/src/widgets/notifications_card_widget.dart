@@ -1,11 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:fullfuel_app/src/styles/fullfuel_colors.dart';
+import 'package:fullfuel_app/src/widgets/dialog_widget.dart';
+import 'package:fullfuel_app/src/entities/fuel_price_entity.dart';
 
-class FavouritesCardWidget extends StatelessWidget {
+class NotificationsCardWidget extends StatelessWidget {
+  final notificationsBox = Hive.box('notifications');
+  final int fuelStationID;
   final String fuelstationName;
   final String fuelType;
 
-  FavouritesCardWidget(this.fuelstationName, this.fuelType);
+  NotificationsCardWidget(
+      this.fuelStationID, this.fuelstationName, this.fuelType);
+
+  void _deleteNotification(int notificationID) async {
+    await notificationsBox.delete(notificationID);
+  }
 
   @override
   Stack build(BuildContext context) {
@@ -13,7 +23,11 @@ class FavouritesCardWidget extends StatelessWidget {
       children: [
         GestureDetector(
           onTap: () => {
-            Navigator.pushNamed(context, 'detail', arguments: {'name': 'value'})
+            Navigator.pushNamed(context, 'notificationsForm', arguments: {
+              'isCreating': false,
+              'selectedFuelStation': fuelStationID,
+              'selectedFuelType': fuelType
+            })
           },
           child: Card(
             elevation: 30,
@@ -26,7 +40,7 @@ class FavouritesCardWidget extends StatelessWidget {
                 children: [
                   _title(),
                   _content(),
-                  _deleteButton(),
+                  _deleteButton(context, fuelStationID),
                 ],
               ),
             ),
@@ -35,7 +49,7 @@ class FavouritesCardWidget extends StatelessWidget {
         Positioned(
           bottom: 0,
           right: 20,
-          child: _actionButton(),
+          child: _actionButton(context),
         )
       ],
     );
@@ -67,17 +81,29 @@ class FavouritesCardWidget extends StatelessWidget {
             TextSpan(
                 text: fuelstationName.toUpperCase(), style: highlightTextStyle),
             TextSpan(text: ' baje el precio del ', style: textStyle),
-            TextSpan(text: fuelType.toUpperCase(), style: highlightTextStyle),
+            TextSpan(
+                text:
+                    FuelPriceEntity.getFuelNameFromType(fuelType).toUpperCase(),
+                style: highlightTextStyle),
           ],
         ),
       ),
     );
   }
 
-  TextButton _deleteButton() {
+  TextButton _deleteButton(BuildContext context, int notificationID) {
     return TextButton(
-      style: TextButton.styleFrom(padding: EdgeInsets.all(0)),
-      onPressed: () => {},
+      style: TextButton.styleFrom(
+          padding: EdgeInsets.all(0),
+          tapTargetSize: MaterialTapTargetSize.shrinkWrap),
+      onPressed: () => dialogWidget(
+          context: context,
+          title: "Eliminar notificación",
+          content:
+              "Si continuas con esta acción, eliminarás la notificación seleccionada ¿quieres realizar esta acción?",
+          actionLabel: "Eliminar",
+          action: _deleteNotification,
+          actionParam: notificationID),
       child: Text(
         "Eliminar".toUpperCase(),
         style: TextStyle(color: Colors.red),
@@ -85,9 +111,16 @@ class FavouritesCardWidget extends StatelessWidget {
     );
   }
 
-  FloatingActionButton _actionButton() {
+  FloatingActionButton _actionButton(BuildContext context) {
     return FloatingActionButton(
-      onPressed: () => {},
+      heroTag: "modifyNotification_$fuelStationID",
+      onPressed: () => {
+        Navigator.pushNamed(context, 'notificationsForm', arguments: {
+          'isCreating': false,
+          'selectedFuelStation': fuelStationID,
+          'selectedFuelType': fuelType
+        })
+      },
       child: Icon(Icons.edit, size: 32, color: FullfuelColors.action),
       backgroundColor: Colors.white,
     );
