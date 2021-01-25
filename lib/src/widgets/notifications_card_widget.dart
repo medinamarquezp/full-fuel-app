@@ -3,6 +3,7 @@ import 'package:hive/hive.dart';
 import 'package:fullfuel_app/src/styles/fullfuel_colors.dart';
 import 'package:fullfuel_app/src/widgets/dialog_widget.dart';
 import 'package:fullfuel_app/src/entities/fuel_price_entity.dart';
+import 'package:fullfuel_app/src/repositories/remote/subscriptions_remote_repo.dart';
 
 class NotificationsCardWidget extends StatelessWidget {
   final notificationsBox = Hive.box('notifications');
@@ -14,6 +15,9 @@ class NotificationsCardWidget extends StatelessWidget {
       this.fuelStationID, this.fuelstationName, this.fuelType);
 
   void _deleteNotification(int notificationID) async {
+    final subscriptionRepo = new SubscriptionsRemoteRepo();
+    await subscriptionRepo.unsubscribe(
+        fuelstationID: fuelStationID, fuelType: fuelType);
     await notificationsBox.delete(notificationID);
   }
 

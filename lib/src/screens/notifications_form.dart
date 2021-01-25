@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fullfuel_app/src/repositories/remote/subscriptions_remote_repo.dart';
 import 'package:hive/hive.dart';
 import 'package:toast/toast.dart';
 import 'package:select_form_field/select_form_field.dart';
@@ -20,7 +21,9 @@ class _NotificationsFormState extends State<NotificationsForm> {
   final notificationsBox = Hive.box('notifications');
   final favouritesBox = Hive.box<FuelstationListEntity>('favourites');
   int _selectedFuelStation;
+  int _editingSelectedFuelStation;
   String _selectedFuelType;
+  String _editingSelectedFuelType;
   String _pageTitle = "Nueva notificación";
   String _actionButtonLabel = "Guardar notificación";
   List<Map<String, dynamic>> _fuelStationList = [];
@@ -45,21 +48,45 @@ class _NotificationsFormState extends State<NotificationsForm> {
   }
 
   Future<void> _saveData(AnimationController controller) async {
-    controller.forward();
-    await notificationsBox.put(_selectedFuelStation, _selectedFuelType);
-    controller.reset();
-    Toast.show("Cambios realizados correctamente", context,
-        duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+    final subscriptionRepo = new SubscriptionsRemoteRepo();
+    if (_selectedFuelStation == _editingSelectedFuelStation &&
+        _selectedFuelType == _editingSelectedFuelType) {
+      Toast.show("No se han detectado cambios", context,
+          duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+    } else if (_editingSelectedFuelStation == null &&
+        _editingSelectedFuelType == null) {
+      controller.forward();
+      await subscriptionRepo.subscribe(
+          fuelstationID: _selectedFuelStation, fuelType: _selectedFuelType);
+      await notificationsBox.put(_selectedFuelStation, _selectedFuelType);
+      controller.reset();
+      Toast.show("Cambios realizados correctamente", context,
+          duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+    } else {
+      controller.forward();
+      await subscriptionRepo.unsubscribe(
+          fuelstationID: _editingSelectedFuelStation,
+          fuelType: _editingSelectedFuelType);
+      await subscriptionRepo.subscribe(
+          fuelstationID: _selectedFuelStation, fuelType: _selectedFuelType);
+      await notificationsBox.put(_selectedFuelStation, _selectedFuelType);
+      controller.reset();
+      Toast.show("Cambios realizados correctamente", context,
+          duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final Map arguments = ModalRoute.of(context).settings.arguments as Map;
     if (arguments != null && arguments['isCreating'] == false) {
-      _selectedFuelStation = arguments['selectedFuelStation'];
-      _selectedFuelType = arguments['selectedFuelType'];
+      _editingSelectedFuelStation = arguments['selectedFuelStation'];
+      _editingSelectedFuelType = arguments['selectedFuelType'];
+      _selectedFuelStation = _editingSelectedFuelStation;
+      _selectedFuelType = _editingSelectedFuelType;
       _pageTitle = "Editar notificación";
       _actionButtonLabel = "Editar notificación";
+      arguments['isCreating'] = true;
     }
 
     return SafeScaffoldWidget(
