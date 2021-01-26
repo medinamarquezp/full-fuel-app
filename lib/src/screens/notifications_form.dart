@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:fullfuel_app/src/repositories/remote/subscriptions_remote_repo.dart';
 import 'package:hive/hive.dart';
 import 'package:toast/toast.dart';
 import 'package:select_form_field/select_form_field.dart';
@@ -9,6 +8,7 @@ import 'package:fullfuel_app/src/widgets/safe_scaffold_widget.dart';
 import 'package:fullfuel_app/src/widgets/form_field_container_widget.dart';
 import 'package:fullfuel_app/src/entities/fuelstation_list_entity.dart';
 import 'package:fullfuel_app/src/repositories/db/favourites_db_repo.dart';
+import 'package:fullfuel_app/src/repositories/remote/subscriptions_remote_repo.dart';
 
 class NotificationsForm extends StatefulWidget {
   const NotificationsForm({Key key}) : super(key: key);
@@ -62,17 +62,20 @@ class _NotificationsFormState extends State<NotificationsForm> {
       controller.reset();
       Toast.show("Cambios realizados correctamente", context,
           duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+      Navigator.of(context).pop();
     } else {
       controller.forward();
       await subscriptionRepo.unsubscribe(
           fuelstationID: _editingSelectedFuelStation,
           fuelType: _editingSelectedFuelType);
+      await notificationsBox.delete(_editingSelectedFuelStation);
       await subscriptionRepo.subscribe(
           fuelstationID: _selectedFuelStation, fuelType: _selectedFuelType);
       await notificationsBox.put(_selectedFuelStation, _selectedFuelType);
       controller.reset();
       Toast.show("Cambios realizados correctamente", context,
           duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+      Navigator.of(context).pop();
     }
   }
 
