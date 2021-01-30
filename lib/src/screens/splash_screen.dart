@@ -28,10 +28,9 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<bool> _fetchData() async {
-    final fuelstations = await _getRemoteFuelstations();
-    final favourites = await _getRemoteFavourites();
-    await _cacheFuelstations(fuelstations);
-    await _cacheFavourites(favourites);
+    final remote = await _initRemote();
+    await _getRemoteFuelstations(remote);
+    await _getRemoteFavourites(remote);
     return true;
   }
 
@@ -50,20 +49,20 @@ class _SplashScreenState extends State<SplashScreen> {
     return currentLocation;
   }
 
-  Future<List<FuelstationListEntity>> _getRemoteFuelstations() async {
-    FuelstationsRemoteRepo remote = await _initRemote();
+  Future<void> _getRemoteFuelstations(FuelstationsRemoteRepo remote) async {
     final fuelstations = await remote.fetchFuelstationsListGeo(
         radius: _searchRadiusValue, showOnlyOpen: _showOnlyOpen);
-    return fuelstations;
+    await _cacheFuelstations(fuelstations);
   }
 
-  Future<List<FuelstationListEntity>> _getRemoteFavourites() async {
-    FuelstationsRemoteRepo remote = await _initRemote();
+  Future<void> _getRemoteFavourites(FuelstationsRemoteRepo remote) async {
     final favouritesBox = Hive.box<FuelstationListEntity>('favourites');
     final favouritesIDs = favouritesBox.keys.toList();
-    final favourites =
-        await remote.fetchFuelstationsListIDs(listIDs: favouritesIDs);
-    return favourites;
+    if (favouritesIDs.isNotEmpty) {
+      final favourites =
+          await remote.fetchFuelstationsListIDs(listIDs: favouritesIDs);
+      await _cacheFavourites(favourites);
+    }
   }
 
   Future<void> _cacheFuelstations(
