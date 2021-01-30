@@ -1,4 +1,4 @@
-package com.example.fullfuel_app
+package com.fullfuel.app
 
 import io.flutter.embedding.android.FlutterActivity
 
