@@ -41,12 +41,8 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<Geolocation> _getLocation() async {
-    Geolocation currentLocation = await Geolocation.getCurrentLocation();
-    await configBox.putAll({
-      'latitude': currentLocation.latitude,
-      'longitude': currentLocation.longitude
-    });
-    return currentLocation;
+    return new Geolocation(
+        configBox.get('latitude'), configBox.get('longitude'));
   }
 
   Future<void> _getRemoteFuelstations(FuelstationsRemoteRepo remote) async {
