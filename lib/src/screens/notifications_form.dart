@@ -6,6 +6,7 @@ import 'package:fullfuel_app/src/styles/fullfuel_colors.dart';
 import 'package:fullfuel_app/src/widgets/button_loading_widget.dart';
 import 'package:fullfuel_app/src/widgets/safe_scaffold_widget.dart';
 import 'package:fullfuel_app/src/widgets/form_field_container_widget.dart';
+import 'package:fullfuel_app/src/services/push_notifications.dart';
 import 'package:fullfuel_app/src/entities/fuelstation_list_entity.dart';
 import 'package:fullfuel_app/src/repositories/db/favourites_db_repo.dart';
 import 'package:fullfuel_app/src/repositories/remote/subscriptions_remote_repo.dart';
@@ -49,34 +50,69 @@ class _NotificationsFormState extends State<NotificationsForm> {
 
   Future<void> _saveData(AnimationController controller) async {
     final subscriptionRepo = new SubscriptionsRemoteRepo();
+    final pushNotifications = new PushNotifications();
     if (_selectedFuelStation == _editingSelectedFuelStation &&
         _selectedFuelType == _editingSelectedFuelType) {
       Toast.show("No se han detectado cambios", context,
           duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
     } else if (_editingSelectedFuelStation == null &&
         _editingSelectedFuelType == null) {
-      controller.forward();
-      await subscriptionRepo.subscribe(
-          fuelstationID: _selectedFuelStation, fuelType: _selectedFuelType);
-      await notificationsBox.put(_selectedFuelStation, _selectedFuelType);
-      controller.reset();
-      Toast.show("Cambios realizados correctamente", context,
-          duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
-      Navigator.of(context).pop();
+      _newNotification(controller, subscriptionRepo, pushNotifications);
     } else {
-      controller.forward();
-      await subscriptionRepo.unsubscribe(
-          fuelstationID: _editingSelectedFuelStation,
-          fuelType: _editingSelectedFuelType);
-      await notificationsBox.delete(_editingSelectedFuelStation);
-      await subscriptionRepo.subscribe(
-          fuelstationID: _selectedFuelStation, fuelType: _selectedFuelType);
-      await notificationsBox.put(_selectedFuelStation, _selectedFuelType);
-      controller.reset();
-      Toast.show("Cambios realizados correctamente", context,
-          duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
-      Navigator.of(context).pop();
+      _editNotification(controller, subscriptionRepo, pushNotifications);
     }
+  }
+
+  void _newNotification(
+      AnimationController controller,
+      SubscriptionsRemoteRepo subscriptionRepo,
+      PushNotifications pushNotifications) async {
+    controller.forward();
+    await subscriptionRepo.subscribe(
+      fuelstationID: _selectedFuelStation,
+      fuelType: _selectedFuelType,
+    );
+    await notificationsBox.put(_selectedFuelStation, _selectedFuelType);
+    final topic = "$_selectedFuelStation-$_selectedFuelType";
+    pushNotifications.subscribeToTopic(topic);
+    controller.reset();
+    Toast.show(
+      "Cambios realizados correctamente",
+      context,
+      duration: Toast.LENGTH_SHORT,
+      gravity: Toast.BOTTOM,
+    );
+    Navigator.of(context).pop();
+  }
+
+  void _editNotification(
+      AnimationController controller,
+      SubscriptionsRemoteRepo subscriptionRepo,
+      PushNotifications pushNotifications) async {
+    controller.forward();
+    await subscriptionRepo.unsubscribe(
+      fuelstationID: _editingSelectedFuelStation,
+      fuelType: _editingSelectedFuelType,
+    );
+    await notificationsBox.delete(_editingSelectedFuelStation);
+    final topicToUnsubscribe =
+        "$_editingSelectedFuelStation-$_editingSelectedFuelType";
+    pushNotifications.unsubscribeFromTopic(topicToUnsubscribe);
+    await subscriptionRepo.subscribe(
+      fuelstationID: _selectedFuelStation,
+      fuelType: _selectedFuelType,
+    );
+    await notificationsBox.put(_selectedFuelStation, _selectedFuelType);
+    final topicToSubscribe = "$_selectedFuelStation-$_selectedFuelType";
+    pushNotifications.subscribeToTopic(topicToSubscribe);
+    controller.reset();
+    Toast.show(
+      "Cambios realizados correctamente",
+      context,
+      duration: Toast.LENGTH_SHORT,
+      gravity: Toast.BOTTOM,
+    );
+    Navigator.of(context).pop();
   }
 
   @override
