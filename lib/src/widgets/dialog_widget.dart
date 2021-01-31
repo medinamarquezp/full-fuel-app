@@ -19,7 +19,7 @@ void dialogWidget({
           new TextButton(
             child: new Text(
               "Cancelar".toUpperCase(),
-              style: TextStyle(color: FullfuelColors.primary, fontSize: 15),
+              style: TextStyle(color: FullfuelColors.secondary, fontSize: 15),
             ),
             onPressed: () {
               Navigator.of(context).pop();
@@ -28,7 +28,7 @@ void dialogWidget({
           new TextButton(
             child: new Text(
               actionLabel.toUpperCase(),
-              style: TextStyle(color: Colors.red, fontSize: 15),
+              style: TextStyle(color: FullfuelColors.primary, fontSize: 15),
             ),
             onPressed: () {
               action(actionParam);
