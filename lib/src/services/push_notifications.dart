@@ -19,6 +19,14 @@ class PushNotifications {
     }
   }
 
+  void subscribeToTopic(String topic) async {
+    await _firebaseMessaging.subscribeToTopic(topic);
+  }
+
+  void unsubscribeFromTopic(String topic) async {
+    await _firebaseMessaging.unsubscribeFromTopic(topic);
+  }
+
   initNotifications() async {
     await _firebaseMessaging.requestNotificationPermissions();
     _firebaseMessaging.configure(
@@ -31,16 +39,19 @@ class PushNotifications {
 
   Future<dynamic> onMessage(Map<String, dynamic> message) async {
     print("======== onMessage ========");
+    message["action"] = "onMessage";
     _streamMessagesController.sink.add(message);
   }
 
   Future<dynamic> onLaunch(Map<String, dynamic> message) async {
     print("======== onLaunch ========");
+    message["action"] = "onLaunch";
     _streamMessagesController.sink.add(message);
   }
 
   Future<dynamic> onResume(Map<String, dynamic> message) async {
     print("======== onResume ========");
+    message["action"] = "onResume";
     _streamMessagesController.sink.add(message);
   }
 
