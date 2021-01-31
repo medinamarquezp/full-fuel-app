@@ -23,10 +23,6 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-
-
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.0
   flutter_svg: ^0.19.2+1
   geolocator: ^6.1.8+1
@@ -48,6 +44,13 @@ dev_dependencies:
     sdk: flutter
   hive_generator: ^0.8.2
   build_runner: ^1.10.6
+  flutter_launcher_icons: "^0.8.0"
+
+flutter_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "lib/assets/icon/fullfuelIcon.png"
+  adaptive_icon_background: "lib/assets/icon/fullfuelIcon.png"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -65,6 +68,7 @@ flutter:
     - lib/assets/
     - lib/assets/dayChart/
     - lib/assets/momentsChart/
+    - lib/assets/icon/
     - .env
   # - images/a_dot_ham.jpeg
 
