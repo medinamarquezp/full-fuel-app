@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
 import 'package:flutter/services.dart';
 import 'package:fullfuel_app/src/widgets/dialog_widget.dart';
 import 'package:fullfuel_app/src/routes/app_routes.dart';
@@ -83,12 +82,7 @@ class _AppState extends State<App> {
   }
 
   Future<Geolocation> _getLocation() async {
-    final configBox = Hive.box('config');
     Geolocation currentLocation = await Geolocation.getCurrentLocation();
-    await configBox.putAll({
-      'latitude': currentLocation.latitude,
-      'longitude': currentLocation.longitude
-    });
     return currentLocation;
   }
 }
