@@ -44,4 +44,5 @@ app.*.map.json
 ios
 android/app/google-services.json
 .env
+key.properties
 
