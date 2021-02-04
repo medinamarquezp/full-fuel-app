@@ -30,6 +30,9 @@ class LinearChartWidget extends StatelessWidget {
       primaryMeasureAxis: new charts.NumericAxisSpec(
           tickProviderSpec:
               new charts.StaticNumericTickProviderSpec(primaryAxisList)),
+      domainAxis: new charts.NumericAxisSpec(
+          tickProviderSpec:
+              new charts.BasicNumericTickProviderSpec(zeroBound: false)),
       defaultRenderer: new charts.LineRendererConfig(includePoints: true),
       behaviors: [
         new charts.SeriesLegend(position: charts.BehaviorPosition.bottom),
